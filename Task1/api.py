@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 CLIENT = OpenAI(
     api_key=os.environ.get("OPENAI_API_KEY", ""),
-    organization=os.environ.get("OPENAI_ORG_ID", ""),
 )
 
 DEFAULT_OPENAI_SETTINGS = {
