@@ -9,6 +9,8 @@ CATEGORIES = ["actor", "musician", "politician", "athlete", "superhero", "villai
 def guessing_page():
     if "inputs" not in st.session_state:
         st.session_state["inputs"] = []
+    if "responses" not in st.session_state:
+        st.session_state["responses"] = []
 
     st.title("Who Am I?")
 
@@ -41,11 +43,34 @@ def guessing_page():
             system_instruction="You are the game master of a guessing game."
         )
         logger.info(f"OpenAI's response: {oai_response.choices[0].message.content}")
+        st.session_state["responses"].append(oai_response.choices[0].message.content)
         st.write(oai_response.choices[0].message.content)
 
-    if st.session_state["inputs"]:
-        st.write("Bisherige Eingaben:")
-        st.write(st.session_state["inputs"])
+        
+    if st.button("Give up and reveal character"):
+        st.markdown(
+            f"""
+            <p style='font-size: 24px; font-weight: bold;'>
+                I was thinking of 
+                <span style='color: red; font-weight: bold;'>{st.session_state['character']}</span>
+            </p>
+            """,
+            unsafe_allow_html=True
+        )
 
-    
-    
+
+    if st.session_state["inputs"]:
+        st.write("") 
+        st.markdown(
+            f"""
+            <p style='font-size: 22px; font-weight: bold;'>
+                <span style='color: black; font-weight: bold;'>Previous entries and answers:</span>
+            </p>
+            """,
+            unsafe_allow_html=True
+        )
+        for i, input_text in enumerate(st.session_state["inputs"]):
+            response = st.session_state["responses"][i]
+            st.write(f"{i+1}: GUESS: {input_text}")
+            st.write(f"{i+1}: RESPONSE: {response}")
+            st.write("") 
