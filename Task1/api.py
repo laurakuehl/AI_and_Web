@@ -13,7 +13,7 @@ CLIENT = OpenAI(
 )
 
 DEFAULT_OPENAI_SETTINGS = {
-    "model":"gpt-4",
+    "model":"gpt-4o-mini",
     "max_tokens":None,
     "temperature":0.8,
     "top_p":0.8,
