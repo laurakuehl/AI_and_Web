@@ -76,7 +76,6 @@ def guessing_page():
 
     # Display previous inputs and responses
     if st.session_state["inputs"]:
-        st.write(st.session_state["character"])
         st.write("") 
         st.markdown(
             f"""
