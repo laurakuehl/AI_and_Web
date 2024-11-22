@@ -45,33 +45,39 @@ def guessing_page():
     user_input = st.text_input("Ask a yes/no question or guess the character!")
 
     if st.button("Speichern"):
-        if user_input:
-            st.session_state["inputs"].append(user_input)
-            st.success("Input saved!")
-            st.session_state["guess_count"] += 1  # Increment guess counter
-        
-        oai_response = think_of_character(
-            prompt=f"""
-                The person or character that has to be guessed is: {st.session_state["character"]}.
-                The contestant asked or guessed: {st.session_state["inputs"][-1]}.
-                Give a yes/ no answer and let the contestant know how close they are to figuring out who the person/ character is.
-            """,
-            system_instruction="You are the game master of a guessing game."
-        )
-        logger.info(f"OpenAI's response: {oai_response.choices[0].message.content}")
-        st.session_state["responses"].append(oai_response.choices[0].message.content)
-        st.write(oai_response.choices[0].message.content)
+        if "character" in st.session_state: #check wether character has already been generated
+            if user_input:
+                st.session_state["inputs"].append(user_input)
+                st.success("Input saved!")
+                st.session_state["guess_count"] += 1  # Increment guess counter
+            
+            oai_response = think_of_character(
+                prompt=f"""
+                    The person or character that has to be guessed is: {st.session_state["character"]}.
+                    The contestant asked or guessed: {st.session_state["inputs"][-1]}.
+                    Give a yes/ no answer and let the contestant know how close they are to figuring out who the person/ character is.
+                """,
+                system_instruction="You are the game master of a guessing game."
+            )
+            logger.info(f"OpenAI's response: {oai_response.choices[0].message.content}")
+            st.session_state["responses"].append(oai_response.choices[0].message.content)
+            st.write(oai_response.choices[0].message.content)
+        else:
+            st.write("Generate character first!")
 
     if st.button("Give up and reveal character"):
-        st.markdown(
-            f"""
-            <p style='font-size: 24px; font-weight: bold;'>
-                I was thinking of 
-                <span style='color: red; font-weight: bold;'>{st.session_state['character']}</span>
-            </p>
-            """,
-            unsafe_allow_html=True
-        )
+        if "character" in st.session_state: #check wether character has already been generated
+            st.markdown(
+                f"""
+                <p style='font-size: 24px; font-weight: bold;'>
+                    I was thinking of 
+                    <span style='color: red; font-weight: bold;'>{st.session_state['character']}</span>
+                </p>
+                """,
+                unsafe_allow_html=True
+            )
+        else:
+            st.write("Generate character first!")
 
     # Display the guess counter
     st.markdown(
