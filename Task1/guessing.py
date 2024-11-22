@@ -86,7 +86,7 @@ def guessing_page():
             st.write("")
     
     if st.button("Give up and reveal character"):
-        if "character" in st.session_state
+        if "character" in st.session_state:
             st.write(f"{st.session_state['character']}")
         else:
             st.write("Generate character first!")
