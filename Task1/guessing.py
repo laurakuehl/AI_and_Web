@@ -79,15 +79,18 @@ def guessing_page():
     if st.session_state["inputs"]:
         st.write("") 
         st.write(f"Previous entries and answers:")
+        #create list of past questions and responses and print it
+        chatlist = []
         for i, input_text in enumerate(st.session_state["inputs"]):
             response = st.session_state["responses"][i]
-            st.write(f"{i+1}: GUESS: {input_text}")
-            st.write(f"{i+1}: RESPONSE: {response}")
-            st.write("")
+            chatlist.insert(0,f"{i+1}: GUESS: {input_text}")
+            chatlist.insert(0,f"{i+1}: RESPONSE: {response}")
+            chatlist.insert(0,"")
+        for t in chatlist:
+            st.write(t)
     
     if st.button("Give up and reveal character"):
         if "character" in st.session_state:
             st.write(f"{st.session_state['character']}")
         else:
             st.write("Generate character first!")
-        
