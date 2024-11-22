@@ -12,6 +12,12 @@ def guessing_page():
 
     st.title("Who Am I?")
 
+    # Initialisierung des Button-Textes und Session-State
+    if 'character' not in st.session_state:  # Wenn der Charakter noch nicht gesetzt wurde
+        button_text = "Let me think of a person or fictional character..."
+    else:
+        button_text = "I have thought of a character!"
+    
     if st.button("Let me think of a person or fictional character..."):
         oai_response = think_of_character(
             prompt= f"""
@@ -23,6 +29,9 @@ def guessing_page():
         )
         logger.info(f"The character is {oai_response.choices[0].message.content}")
         st.session_state["character"] = oai_response.choices[0].message.content
+        st.session_state.button_pressed = True 
+    if 'button_pressed' in st.session_state and st.session_state.button_pressed:
+        st.button("I have thought of a character!")
 
     
     user_input = st.text_input("Ask a yes/no question or guess the character!")
