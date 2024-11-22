@@ -17,7 +17,12 @@ def guessing_page():
 
     st.title("Who Am I?")
 
-    # Generate a new character
+    # Initialisierung des Button-Textes und Session-State
+    if 'character' not in st.session_state:  # Wenn der Charakter noch nicht gesetzt wurde
+        button_text = "Let me think of a person or fictional character..."
+    else:
+        button_text = "I have thought of a character!"
+    
     if st.button("Let me think of a person or fictional character..."):
         oai_response = think_of_character(
             prompt=f"""
@@ -32,7 +37,11 @@ def guessing_page():
         st.session_state["guess_count"] = 0  
         st.session_state["inputs"] = []  
         st.session_state["responses"] = []  
+        st.session_state.button_pressed = True 
+    if 'button_pressed' in st.session_state and st.session_state.button_pressed:
+        st.write("I have thought of a character!")
 
+    
     user_input = st.text_input("Ask a yes/no question or guess the character!")
 
     if st.button("Speichern"):
@@ -99,4 +108,10 @@ TO DOs:
 - Wenn der name erraten wird (auch in minimal anderer rechtschreibung oder so), soll klar gesagt werden dass es richtig war, bis jetzt 
     er meistens nur dass es very close ist
 - erst guesses annehmen wenn der character genereiert wurde (mit aufforderung dem button zu klicken oder so), ansosnten kommt es nach dem ersten guess zu komischen fehlermeldungen
+- den button in ein textfeld ändern(Dennis)
+
+
+Idee
+- wenn wir zählen wie viele guesses eine Person in den Kategorien braucht. Benennen in welcher Kategorie man besser ist.
+-
 """
