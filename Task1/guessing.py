@@ -46,28 +46,31 @@ def guessing_page():
         st.session_state.enter_pressed = True
 
     if st.session_state.enter_pressed:
-        if user_input:
-            st.session_state["inputs"].append(user_input)
-            st.session_state["guess_count"] += 1  # Increment guess counter
-            # create a sucess message that dissapears after a few seconds
-            # so that it can reappear after pressing enter again
-            placeholder = st.empty()
-            with placeholder:
-                st.success("Your guess will be processed...")
-            time.sleep(3)
-            placeholder.empty()
-        
-        oai_response = think_of_character(
-            prompt=f"""
-                The person or character that has to be guessed is: {st.session_state["character"]}.
-                The contestant asked or guessed: {st.session_state["inputs"][-1]}.
-                Give a yes/ no answer and let the contestant know how close they are to figuring out who the person/ character is.
-            """,
-            system_instruction="You are the game master of a guessing game."
-        )
-        logger.info(f"OpenAI's response: {oai_response.choices[0].message.content}")
-        st.session_state["responses"].append(oai_response.choices[0].message.content)
-        st.write(oai_response.choices[0].message.content)
+        if "character" in st.session_state:
+            if user_input:
+                st.session_state["inputs"].append(user_input)
+                st.session_state["guess_count"] += 1  # Increment guess counter
+                # create a sucess message that dissapears after a few seconds
+                # so that it can reappear after pressing enter again
+                placeholder = st.empty()
+                with placeholder:
+                    st.success("Your guess will be processed...")
+                time.sleep(3)
+                placeholder.empty()
+
+            oai_response = think_of_character(
+                prompt=f"""
+                    The person or character that has to be guessed is: {st.session_state["character"]}.
+                    The contestant asked or guessed: {st.session_state["inputs"][-1]}.
+                    Give a yes/ no answer and let the contestant know how close they are to figuring out who the person/ character is.
+                """,
+                system_instruction="You are the game master of a guessing game."
+            )
+            logger.info(f"OpenAI's response: {oai_response.choices[0].message.content}")
+            st.session_state["responses"].append(oai_response.choices[0].message.content)
+            st.write(oai_response.choices[0].message.content)
+        else:
+              st.write("Generate character first!")
 
     # Display the guess counter
     st.write(f"Guesses so far: {st.session_state['guess_count']}")
@@ -83,5 +86,8 @@ def guessing_page():
             st.write("")
     
     if st.button("Give up and reveal character"):
-        st.write(f"{st.session_state['character']}")
+        if "character" in st.session_state
+            st.write(f"{st.session_state['character']}")
+        else:
+            st.write("Generate character first!")
         
