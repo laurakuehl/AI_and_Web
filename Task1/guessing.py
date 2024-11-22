@@ -1,4 +1,5 @@
 import logging
+import time
 import streamlit as st
 from api import think_of_character
 
@@ -14,15 +15,12 @@ def guessing_page():
         st.session_state["responses"] = []
     if "guess_count" not in st.session_state:
         st.session_state["guess_count"] = 0
+    if "enter_pressed" not in st.session_state:
+        st.session_state["enter_pressed"] = False
 
     st.title("Who Am I?")
 
-    # Initialisierung des Button-Textes und Session-State
-    if 'character' not in st.session_state:  # Wenn der Charakter noch nicht gesetzt wurde
-        button_text = "Let me think of a person or fictional character..."
-    else:
-        button_text = "I have thought of a character!"
-    
+    # Initialize button text and session-state
     if st.button("Let me think of a person or fictional character..."):
         oai_response = think_of_character(
             prompt=f"""
@@ -43,14 +41,23 @@ def guessing_page():
 
     
     user_input = st.text_input("Ask a yes/no question or guess the character!")
+    # Trigger action only once when Enter is pressed
+    if user_input and not st.session_state.enter_pressed:
+        st.session_state.enter_pressed = True
 
-    if st.button("Speichern"):
-        if "character" in st.session_state: #check wether character has already been generated
+    if st.session_state.enter_pressed:
+        if "character" in st.session_state:
             if user_input:
                 st.session_state["inputs"].append(user_input)
-                st.success("Input saved!")
                 st.session_state["guess_count"] += 1  # Increment guess counter
-            
+                # create a sucess message that dissapears after a few seconds
+                # so that it can reappear after pressing enter again
+                placeholder = st.empty()
+                with placeholder:
+                    st.success("Your guess will be processed...")
+                time.sleep(3)
+                placeholder.empty()
+
             oai_response = think_of_character(
                 prompt=f"""
                     The person or character that has to be guessed is: {st.session_state["character"]}.
@@ -63,61 +70,24 @@ def guessing_page():
             st.session_state["responses"].append(oai_response.choices[0].message.content)
             st.write(oai_response.choices[0].message.content)
         else:
-            st.write("Generate character first!")
-
-    if st.button("Give up and reveal character"):
-        if "character" in st.session_state: #check wether character has already been generated
-            st.markdown(
-                f"""
-                <p style='font-size: 24px; font-weight: bold;'>
-                    I was thinking of 
-                    <span style='color: red; font-weight: bold;'>{st.session_state['character']}</span>
-                </p>
-                """,
-                unsafe_allow_html=True
-            )
-        else:
-            st.write("Generate character first!")
+              st.write("Generate character first!")
 
     # Display the guess counter
-    st.markdown(
-        f"""
-        <p style='font-size: 20px; font-weight: bold;'>
-            <span style='color: blue;'>Guesses so far: {st.session_state['guess_count']}</span>
-        </p>
-        """,
-        unsafe_allow_html=True
-    )
+    st.write(f"Guesses so far: {st.session_state['guess_count']}")
 
     # Display previous inputs and responses
     if st.session_state["inputs"]:
         st.write("") 
-        st.markdown(
-            f"""
-            <p style='font-size: 22px; font-weight: bold;'>
-                <span style='color: black; font-weight: bold;'>Previous entries and answers:</span>
-            </p>
-            """,
-            unsafe_allow_html=True
-        )
+        st.write(f"Previous entries and answers:")
         for i, input_text in enumerate(st.session_state["inputs"]):
             response = st.session_state["responses"][i]
             st.write(f"{i+1}: GUESS: {input_text}")
             st.write(f"{i+1}: RESPONSE: {response}")
             st.write("")
+    
+    if st.button("Give up and reveal character"):
+        if "character" in st.session_state
+            st.write(f"{st.session_state['character']}")
+        else:
+            st.write("Generate character first!")
         
-
-
-"""
-TO DOs:
-- Wenn ein neuer Charakter charakter generiert wird soll die Ausgabe von bisherigen Guesses und Responses zurückgesetzt werden.
-- Wenn der name erraten wird (auch in minimal anderer rechtschreibung oder so), soll klar gesagt werden dass es richtig war, bis jetzt 
-    er meistens nur dass es very close ist
-- erst guesses annehmen wenn der character genereiert wurde (mit aufforderung dem button zu klicken oder so), ansosnten kommt es nach dem ersten guess zu komischen fehlermeldungen
-- den button in ein textfeld ändern(Dennis)
-
-
-Idee
-- wenn wir zählen wie viele guesses eine Person in den Kategorien braucht. Benennen in welcher Kategorie man besser ist.
--
-"""
