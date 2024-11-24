@@ -16,6 +16,25 @@ def statistics():
     st.write("Alle gespeicherten Eingaben:")
     st.write(st.session_state["inputs"])
 
+    # Guesses per category
+    st.write("Guesses per category:")
+    category_guesses = st.session_state.get("category_guesses", {})
+
+    # Prepare data for visualization
+    category_data = {
+        "Category": [],
+        "Guess Count": [],
+    }
+    for category, guesses in category_guesses.items():
+        category_data["Category"].append(category)
+        category_data["Guess Count"].append(len(guesses))
+
+    # Convert to DataFrame
+    df_category = pd.DataFrame(category_data)
+
+    # Display guesses per category as a table
+    st.write(df_category)
+
     # Create a DataFrame with a single value for total inputs count
     df_total_inputs = pd.DataFrame({
         'Category': ['Total Inputs'],
@@ -52,4 +71,3 @@ def statistics():
     )
     st.altair_chart(bar_chart, use_container_width=True)
 
-    # Add a "frame" column to simulate animation (stepping through the count)

@@ -14,6 +14,12 @@ def guessing_page():
         st.session_state["responses"] = []
     if "guess_count" not in st.session_state:
         st.session_state["guess_count"] = 0
+    if "category_guesses" not in st.session_state:
+        st.session_state["category_guesses"] = {category: [] for category in CATEGORIES}
+    if "category" not in st.session_state:
+        st.session_state["category"] = None
+    if "character" not in st.session_state:
+        st.session_state["character"] = None  
 
     st.title("Who Am I?")
 
@@ -28,12 +34,16 @@ def guessing_page():
             prompt=f"""
                 i am a game master of a guessing game and you assist me. Think of a popular person or fictional character
                 belonging to one of the following categories: {CATEGORIES}.
-                Give me just the full name in your answer
+                Give me just the full name and the category in your answer (e.g., 'John Doe, actor')
             """,
             system_instruction="i am the game master of a guessing game and you help me out."
         )
-        logger.info(f"The character is {oai_response.choices[0].message.content}")
-        st.session_state["character"] = oai_response.choices[0].message.content
+        response_text = oai_response.choices[0].message.content.strip()
+        name, category = response_text.split(", ", 1)
+
+        logger.info(f"The character is {name}, category: {category}")
+        st.session_state["character"] = name
+        st.session_state["category"] = category 
         st.session_state["guess_count"] = 0  
         st.session_state["inputs"] = []  
         st.session_state["responses"] = []  
@@ -49,7 +59,7 @@ def guessing_page():
             st.session_state["inputs"].append(user_input)
             st.success("Input saved!")
             st.session_state["guess_count"] += 1  # Increment guess counter
-        
+            st.session_state["category_guesses"][st.session_state["category"]].append(user_input)
         oai_response = think_of_character(
             prompt=f"""
                 The person or character that has to be guessed is: {st.session_state["character"]}.
@@ -114,4 +124,20 @@ TO DOs:
 Idee
 - wenn wir zählen wie viele guesses eine Person in den Kategorien braucht. Benennen in welcher Kategorie man besser ist.
 -
+
+
+Meeting 22 Nov:
+stats:
+- guesses per category Dennis
+- durchschnitt guesses übergreifend Dennis
+
+guessing:
+- erst guesses annehmen wenn der character genereiert wurde (mit aufforderung dem button zu klicken oder so) Konstantin
+- Wenn ein neuer Charakter charakter generiert wird soll die Ausgabe von bisherigen Guesses und Responses zurückgesetzt werden Konstantin
+- check if guess is correct (auch bei falscher rechtschreibung): baloons Laura
+- save button in enter umändern Laura
+- liste der guesses umdrehen Konstantin
+- prompt engineering: Qualität der Antworten verbessern Laura
+- ausprobieren, ob das Einfügen der ganzen Konversation in den Prompt hilft
+- spezifizieren wie die Rückmeldung sein soll (entweder durch genauere Beschreibung oder durch Beispiele von Antwortmöglichkeiten)
 """
