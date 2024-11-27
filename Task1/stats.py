@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 
+
 def statistics():
         
     st.title("Statistik über deine Eingaben")
@@ -24,15 +25,49 @@ def statistics():
     category_data = {
         "Category": [],
         "Guess Count": [],
+        "Mean Guesses": [],
+
     }
     for category, guesses in category_guesses.items():
-        category_data["Category"].append(category)
-        category_data["Guess Count"].append(len(guesses))
+        if guesses:
+            category_data["Category"].append(category)
+            category_data["Guess Count"].append(len(guesses))
+            category_data["Mean Guesses"].append(
+                len(guesses) / total_inputs if total_inputs > 0 else 0
+            )
+    
+    total_categories = len([c for c in category_guesses.values() if c])
+    mean_guesses = sum(category_data["Guess Count"]) / total_categories if total_categories > 0 else 0
+
+    st.write(f"Mean guesses per category: {mean_guesses:.2f}")
+
+        
+
 
     # Convert to DataFrame
     df_category = pd.DataFrame(category_data)
 
+    # Find the category with the least mean guesses
+    if not df_category.empty:  # Ensure DataFrame is not empty
+        min_mean_index = df_category["Mean Guesses"].idxmin()
+        least_guesses_category = df_category.loc[min_mean_index, "Category"]
+        least_guesses_mean = df_category.loc[min_mean_index, "Mean Guesses"]
+
+        # *** Display special highlight for the category with the least guesses ***
+        st.markdown(
+            f"""
+            <div style="padding: 10px; background-color: #DFF2BF; border-radius: 10px; text-align: center;">
+                <h3 style="color: #4F8A10;">Category with the least guesses:</h3>
+                <p style="font-size: 20px; color: #4F8A10; font-weight: bold;">
+                    {least_guesses_category} (Mean Guesses: {least_guesses_mean:.2f})
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
     # Display guesses per category as a table
+    #st.write("Guesses per category (with means):")
     st.write(df_category)
 
     # Create a DataFrame with a single value for total inputs count
