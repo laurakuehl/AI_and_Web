@@ -105,4 +105,3 @@ def statistics():
         strokeWidth=0  # Remove outer border around chart
     )
     st.altair_chart(bar_chart, use_container_width=True)
-
