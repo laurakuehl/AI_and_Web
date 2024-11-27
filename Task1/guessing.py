@@ -1,5 +1,5 @@
 import logging
-import streamlit as st
+import streamlit as st # type: ignore
 from api import think_of_character
 
 logger = logging.getLogger(__name__)
