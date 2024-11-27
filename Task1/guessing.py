@@ -11,14 +11,6 @@ CATEGORIES = ["actor", "musician", "politician", "athlete", "superhero", "villai
 def guessing_page():
     st.markdown("""
         <style>
-        .stApp {
-            background-color: #F5F5F5;
-        }
-
-        .css-1d391kg {
-            background-color: #E5E5E5 !important;
-        }
-
         .css-1d391kg * {
             color: #333333 !important;
         }
@@ -45,7 +37,6 @@ def guessing_page():
         }
 
         .chat-history {
-            background-color: #f9f9f9;
             padding: 10px;
             border-radius: 8px;
             margin-bottom: 10px;
