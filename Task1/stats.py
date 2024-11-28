@@ -4,6 +4,9 @@ import pandas as pd
 import altair as alt
 
 def statistics():
+    """
+    Displays statistical information and a visualization of the user's inputs.
+    """
         
     st.title("Statistik über deine Eingaben")
 
