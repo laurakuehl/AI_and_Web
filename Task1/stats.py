@@ -32,10 +32,10 @@ def statistics():
                 sum(guesses) / len(guesses) if len(guesses) > 0 else 0
             )
     
-    total_categories = len([c for c in category_guesses.values() if c])
-    mean_guesses = sum(category_data["Guess Count"]) / total_categories if total_categories > 0 else 0
+    total_guesses = sum(len(guesses) for guesses in category_guesses.values() if guesses)
+    mean_guesses = (sum(category_data["Guess Count"]) / total_guesses) if total_guesses > 0 else 0
 
-    st.write(f"Mean guesses: {mean_guesses:.2f}")
+    st.write(f"Mean guesses: {mean_guesses:.2f}")   
 
         
 
@@ -43,24 +43,7 @@ def statistics():
     # Convert to DataFrame
     df_category = pd.DataFrame(category_data)
 
-    # Find the category with the least mean guesses
-    if not df_category.empty:  # Ensure DataFrame is not empty
-        min_mean_index = df_category["Mean Guesses"].idxmin()
-        least_guesses_category = df_category.loc[min_mean_index, "Category"]
-        least_guesses_mean = df_category.loc[min_mean_index, "Mean Guesses"]
-
-        # *** Display special highlight for the category with the least guesses ***
-        st.markdown(
-            f"""
-            <div style="padding: 10px; background-color: #DFF2BF; border-radius: 10px; text-align: center;">
-                <h3 style="color: #4F8A10;">Category with the least guesses:</h3>
-                <p style="font-size: 20px; color: #4F8A10; font-weight: bold;">
-                    {least_guesses_category} (Mean Guesses: {least_guesses_mean:.2f})
-                </p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    
 
     # Display guesses per category as a table
     #st.write("Guesses per category (with means):")
@@ -103,3 +86,22 @@ def statistics():
             strokeWidth=0  # Remove outer border around chart
         )
         st.altair_chart(bar_chart, use_container_width=True)
+
+        # Find the category with the least mean guesses
+    if not df_category.empty:  # Ensure DataFrame is not empty
+        min_mean_index = df_category["Mean Guesses"].idxmin()
+        least_guesses_category = df_category.loc[min_mean_index, "Category"]
+        least_guesses_mean = df_category.loc[min_mean_index, "Mean Guesses"]
+
+        # *** Display special highlight for the category with the least guesses ***
+        st.markdown(
+            f"""
+            <div style="padding: 10px; background-color: #DFF2BF; border-radius: 10px; text-align: center;">
+                <h3 style="color: #4F8A10;">Category with the least guesses:</h3>
+                <p style="font-size: 20px; color: #4F8A10; font-weight: bold;">
+                    {least_guesses_category} (Mean Guesses: {least_guesses_mean:.2f})
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
