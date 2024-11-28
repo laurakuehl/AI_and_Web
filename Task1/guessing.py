@@ -106,7 +106,6 @@ def guessing_page():
                 with st.spinner("Processing your guess..."):
                     time.sleep(2)
 
-            st.session_state["category_guesses"][st.session_state["category"]].append(user_input)
             oai_response = think_of_character(
                 prompt=f"""
                     The person or character that has to be guessed is: {st.session_state["character"]}.
@@ -130,6 +129,7 @@ def guessing_page():
 
     if st.session_state.enter_answer:
         if is_similar(answer_input, st.session_state.character):
+            st.session_state["category_guesses"][st.session_state["category"]].append(st.session_state["guess_count"])
             st.balloons()
             st.session_state.enter_answer = False
         else:
@@ -163,6 +163,7 @@ def guessing_page():
 
     if st.button("Give up and reveal character"):
         if "character" in st.session_state:
+            st.session_state["category_guesses"][st.session_state["category"]].append(st.session_state["guess_count"])
             st.warning(f"The character was: {st.session_state['character']}")
             # Clear session state
             st.session_state["inputs"] = []

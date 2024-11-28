@@ -6,15 +6,11 @@ import altair as alt # type: ignore
 
 def statistics():
         
-    st.title("Statistik über deine Eingaben")
+    st.title("Stats of your guesses!")
 
     total_inputs = len(st.session_state["inputs"])
-    unique_inputs = len(set(st.session_state["inputs"]))
 
-    st.write(f"Anzahl der Eingaben: {total_inputs}")
-    st.write(f"Anzahl der einzigartigen Eingaben: {unique_inputs}")
-
-    st.write("Alle gespeicherten Eingaben:")
+    st.write("Last Inputs")
     st.write(st.session_state["inputs"])
 
     # Guesses per category
@@ -29,17 +25,18 @@ def statistics():
 
     }
     for category, guesses in category_guesses.items():
+        print(guesses)
         if guesses:
             category_data["Category"].append(category)
-            category_data["Guess Count"].append(len(guesses))
+            category_data["Guess Count"] = sum(guesses)
             category_data["Mean Guesses"].append(
-                len(guesses) / total_inputs if total_inputs > 0 else 0
+                sum(guesses) / len(guesses) if len(guesses) > 0 else 0
             )
     
-    total_categories = len([c for c in category_guesses.values() if c])
-    mean_guesses = sum(category_data["Guess Count"]) / total_categories if total_categories > 0 else 0
+    # total_categories = len([c for c in category_guesses.values() if c])
+    # mean_guesses = sum(category_data["Guess Count"]) / total_categories if total_categories > 0 else 0
 
-    st.write(f"Mean guesses per category: {mean_guesses:.2f}")
+    # st.write(f"Mean guesses: {mean_guesses:.2f}")
 
         
 
