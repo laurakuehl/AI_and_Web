@@ -76,7 +76,7 @@ def guessing_page():
                 The person or character that has to be guessed is: {st.session_state["character"]}.
                 This is the chat history: {st.session_state["chat_history"]}.
                 The contestant now asked or guessed: {user_message}.
-                Give a yes/no answer and let the contestant know how close they are to figuring out who the person/character is.
+                Give a yes/no answer and estimate the quality of the guess.
 
                 If the contestant guessed the right character or person, answer: 
                 'HOORAY, you guessed right!'
