@@ -1,5 +1,4 @@
 import logging
-import time
 import streamlit as st # type: ignore
 from api import think_of_character
 from util import is_similar, process_answer, process_question
@@ -27,15 +26,15 @@ def guessing_page():
     if "guess_count" not in st.session_state:
         st.session_state["guess_count"] = 0  # Counts the number of guesses
     if "chat_history" not in st.session_state:
-        st.session_state["chat_history"] = []
+        st.session_state["chat_history"] = [] # Stores chat history
     if "character" not in st.session_state:
         st.session_state["character"] = None
     if "category" not in st.session_state:
         st.session_state["category"] = None
     if "category_guesses" not in st.session_state:
-        st.session_state["category_guesses"] = {category: [] for category in CATEGORIES}
+        st.session_state["category_guesses"] = {category: [] for category in CATEGORIES} # Stores guesses per category
     if "ratings" not in st.session_state:
-        st.session_state["ratings"] = []
+        st.session_state["ratings"] = [] # Stores chatGPT's ratings
 
     st.markdown('<div class="title">Who Am I?</div>', unsafe_allow_html=True)
 
