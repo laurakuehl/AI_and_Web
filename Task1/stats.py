@@ -106,6 +106,9 @@ def statistics():
         # Fix missing data by interpolation
         ratings = pd.Series(ratings).interpolate().tolist()
 
+        # Convert strings to integers
+        ratings = list(map(int, ratings))  # Convert to integers
+        
         # Create the plot
         fig, ax = plt.subplots()
         ax.plot(ratings, marker="o", linestyle="-")
