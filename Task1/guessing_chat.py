@@ -40,6 +40,11 @@ def guessing_page():
 
     # Start the game
     if st.button("Let me think of a person or fictional character...", key="start_button"):
+        # Reset
+        st.session_state["guess_count"] = 0  
+        st.session_state["chat_history"] = []
+        
+        # Generate character or person
         oai_response = think_of_character(
             prompt=f"""
                 i am a game master of a guessing game and you assist me. Think of a popular person or fictional character
@@ -55,7 +60,7 @@ def guessing_page():
         st.session_state["character"] = name
         print(st.session_state["character"])
         st.session_state["category"] = category
-        st.session_state["chat_history"] = [("bot", "I have thought of a character! Try to guess who it is!")]
+        st.session_state["chat_history"] = [("bot", "I have thought of a character! Try to guess who it is!")] 
 
     # Display chat history
     for user_or_bot, message in st.session_state["chat_history"]:
