@@ -1,6 +1,6 @@
 import logging
 import time
-import streamlit as st
+import streamlit as st # type: ignore
 from api import think_of_character
 from util import is_similar, process_answer, process_question
 
@@ -68,25 +68,34 @@ def guessing_page():
     if "enter_question" not in st.session_state:
         st.session_state["enter_question"] = False  # Flag to track if a question is being processed
     if "enter_answer" not in st.session_state:
-        st.session_state["enter_answer"] = False  # Flag to track if a final answer is being processed
+        st.session_state["enter_answer"] = False
+    if "category_guesses" not in st.session_state:
+        st.session_state["category_guesses"] = {category: [] for category in CATEGORIES}
+    if "category" not in st.session_state:
+        st.session_state["category"] = None
+    if "character" not in st.session_state:
+        st.session_state["character"] = None
 
 
     st.markdown('<div class="title">Who Am I?</div>', unsafe_allow_html=True)
 
     # Button to start the game and generate a character
-    if st.button("Think of a person or fictional character!", key="start_button"):
+    if st.button("Let me think of a person or fictional character...", key="start_button"):
         # Sending a prompt to the AI to generate a character
         oai_response = think_of_character(
             prompt=f"""
                 i am a game master of a guessing game and you assist me. Think of a popular person or fictional character
                 belonging to one of the following categories: {CATEGORIES}.
-                Give me just the full name in your answer
+                Give me just the full name and the category in your answer (e.g., 'John Doe, actor')
             """,
             system_instruction="i am the game master of a guessing game and you help me out."
         )
+        response_text = oai_response.choices[0].message.content.strip()
+        name, category = response_text.split(", ", 1)
         #logger and session states to store information during a session
-        logger.info(f"The character is {oai_response.choices[0].message.content}")
-        st.session_state["character"] = oai_response.choices[0].message.content
+        logger.info(f"The character is {name}, category: {category}")
+        st.session_state["character"] = name
+        st.session_state["category"] = category 
         print(st.session_state.character)
         st.session_state["guess_count"] = 0  
         st.session_state["inputs"] = []  
@@ -132,6 +141,7 @@ def guessing_page():
     # Processing user's final answer
     if st.session_state.enter_answer:
         if is_similar(answer_input, st.session_state.character):
+            st.session_state["category_guesses"][st.session_state["category"]].append(st.session_state["guess_count"])
             st.balloons()
             st.session_state.enter_answer = False
         else:
@@ -165,6 +175,7 @@ def guessing_page():
     # Button to reveal the character and reset the game
     if st.button("Give up and reveal character"):
         if "character" in st.session_state:
+            st.session_state["category_guesses"][st.session_state["category"]].append(st.session_state["guess_count"])
             st.warning(f"The character was: {st.session_state['character']}")
             # Clear session state for a new game
             st.session_state["inputs"] = []
