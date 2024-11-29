@@ -11,10 +11,6 @@ def statistics():
         
     st.title("Stats of your guesses!")
 
-    
-    st.write("Last Inputs")
-    st.write(st.session_state["inputs"])
-
     # Guesses per category
     #st.write("Guesses per category:")
     category_guesses = st.session_state.get("category_guesses", {})
@@ -27,7 +23,6 @@ def statistics():
 
     }
     for category, guesses in category_guesses.items():
-        print(guesses)
         if guesses:
             category_data["Category"].append(category)
             category_data["Guess Count"].append(sum(guesses))
