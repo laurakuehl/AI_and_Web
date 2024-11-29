@@ -19,11 +19,13 @@ def statistics():
     #st.write("Guesses per category:")
     category_guesses = st.session_state.get("category_guesses", {})
 
+
     # Prepare data for visualization
     category_data = {
         "Category": [],
         "Guess Count": [],
         "Mean Guesses": [],
+        "Games Played": [],
 
     }
     for category, guesses in category_guesses.items():
@@ -34,6 +36,7 @@ def statistics():
             category_data["Mean Guesses"].append(
                 sum(guesses) / len(guesses) if len(guesses) > 0 else 0
             )
+            category_data["Games Played"].append(len(guesses))  # Add number of games played
     
     total_guesses = sum(len(guesses) for guesses in category_guesses.values() if guesses)
     mean_guesses = (sum(category_data["Guess Count"]) / total_guesses) if total_guesses > 0 else 0
@@ -108,3 +111,40 @@ def statistics():
             """,
             unsafe_allow_html=True
         )
+
+    # Prepare data for a bar chart showing guesses per round
+    round_data = {
+        "Round": [],
+        "Guesses": [],
+        "Category": []
+    }
+
+    # Populate the data
+    round_counter = 1
+    for category, guesses in category_guesses.items():
+        for guess_count in guesses:
+            round_data["Round"].append(f"Round {round_counter}")
+            round_data["Guesses"].append(guess_count)
+            round_data["Category"].append(category)
+            round_counter += 1
+
+    # Convert to DataFrame
+    df_rounds = pd.DataFrame(round_data)
+
+    # Create a bar chart for guesses per round
+    if not df_rounds.empty:
+        bar_chart_rounds = alt.Chart(df_rounds).mark_bar().encode(
+            x=alt.X("Round:N", title="Round"),
+            y=alt.Y("Guesses:Q", title="Number of Guesses"),
+            color=alt.Color("Category:N", title="Category"),
+            tooltip=[alt.Tooltip("Round:N", title="Round"),
+                    alt.Tooltip("Guesses:Q", title="Number of Guesses"),
+                    alt.Tooltip("Category:N", title="Category")]
+        ).properties(
+            title="Guesses per Round",
+            width=600,
+            height=400
+        )
+
+        # Display the chart
+        st.altair_chart(bar_chart_rounds, use_container_width=True)
