@@ -5,6 +5,9 @@ import altair as alt # type: ignore
 
 
 def statistics():
+    """
+    Displays statistical information and a visualization of the user's inputs.
+    """
         
     st.title("Stats of your guesses!")
 
