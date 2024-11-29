@@ -11,12 +11,7 @@ def statistics():
         
     st.title("Stats of your guesses!")
 
-    
-    st.write("Last Inputs")
-    st.write(st.session_state["inputs"])
-
     # Guesses per category
-    #st.write("Guesses per category:")
     category_guesses = st.session_state.get("category_guesses", {})
 
 
@@ -29,7 +24,6 @@ def statistics():
 
     }
     for category, guesses in category_guesses.items():
-        print(guesses)
         if guesses:
             category_data["Category"].append(category)
             category_data["Guess Count"].append(sum(guesses))
@@ -41,59 +35,10 @@ def statistics():
     total_guesses = sum(len(guesses) for guesses in category_guesses.values() if guesses)
     mean_guesses = (sum(category_data["Guess Count"]) / total_guesses) if total_guesses > 0 else 0
 
-    st.write(f"Mean guesses: {mean_guesses:.2f}")   
-
-        
-
-
     # Convert to DataFrame
     df_category = pd.DataFrame(category_data)
 
-    
-
-    # Display guesses per category as a table
-    #st.write("Guesses per category (with means):")
-    st.write(df_category)
-
-    # Create a DataFrame with a single value for total inputs count
-        # Updated: Create a bar chart for the sum of the Guess Count column
-    if not df_category.empty:
-        df_total_guess_count = pd.DataFrame({
-            'Metric': ['Sum of Guess Count'],  # Updated label
-            'Value': [df_category["Guess Count"].sum()],  # Sum of the Guess Count column
-        })
-
-        # Updated: Bar chart visualization
-        bar_chart = alt.Chart(df_total_guess_count).mark_bar(
-            cornerRadiusTopLeft=10,
-            cornerRadiusTopRight=10
-        ).encode(
-            x=alt.X('Metric:N', title='', axis=alt.Axis(labelAngle=0)),  # Use 'Metric' as x-axis
-            y=alt.Y('Value:Q', title='Sum of Guesses ', scale=alt.Scale(domain=(0, df_total_guess_count["Value"].max() + 5))),
-            tooltip=[alt.Tooltip('Value:Q', title="Sum of Guesses")]
-        ).properties(
-            width=400,
-            height=300
-        ).configure_mark(
-            color=alt.Gradient(
-                gradient="linear",
-                stops=[               
-                    alt.GradientStop(color="#FF0000", offset=0),    # Red
-                    alt.GradientStop(color="#FF7F00", offset=0.16), # Orange
-                    alt.GradientStop(color="#FFFF00", offset=0.33), # Yellow
-                    alt.GradientStop(color="#00FF00", offset=0.5),  # Green
-                    alt.GradientStop(color="#0000FF", offset=0.66), # Blue
-                    alt.GradientStop(color="#4B0082", offset=0.83), # Indigo
-                    alt.GradientStop(color="#8B00FF", offset=1)     # Violet
-                ],
-                x1=1, x2=1, y1=1, y2=0
-            )
-        ).configure_view(
-            strokeWidth=0  # Remove outer border around chart
-        )
-        st.altair_chart(bar_chart, use_container_width=True)
-
-        # Find the category with the least mean guesses
+    # Find the category with the least mean guesses
     if not df_category.empty:  # Ensure DataFrame is not empty
         min_mean_index = df_category["Mean Guesses"].idxmin()
         least_guesses_category = df_category.loc[min_mean_index, "Category"]
@@ -111,6 +56,12 @@ def statistics():
             """,
             unsafe_allow_html=True
         )
+    
+    # Display mean of all guesses
+    st.write(f"**Mean guesses: {mean_guesses:.2f}**") 
+
+    # Display guesses per category as a table
+    st.write(df_category)
 
     # Prepare data for a bar chart showing guesses per round
     round_data = {
@@ -141,10 +92,49 @@ def statistics():
                     alt.Tooltip("Guesses:Q", title="Number of Guesses"),
                     alt.Tooltip("Category:N", title="Category")]
         ).properties(
-            title="Guesses per Round",
+            title="Guesses per round",
             width=600,
             height=400
         )
 
         # Display the chart
         st.altair_chart(bar_chart_rounds, use_container_width=True)
+
+    # Create a DataFrame with a single value for total inputs count
+        # Updated: Create a bar chart for the sum of the Guess Count column
+    if not df_category.empty:
+        df_total_guess_count = pd.DataFrame({
+            'Metric': ['Sum of Guess Count'],  # Updated label
+            'Value': [df_category["Guess Count"].sum()],  # Sum of the Guess Count column
+        })
+
+        # Updated: Bar chart visualization
+        bar_chart = alt.Chart(df_total_guess_count).mark_bar(
+            cornerRadiusTopLeft=10,
+            cornerRadiusTopRight=10
+        ).encode(
+            x=alt.X('Metric:N', title='', axis=alt.Axis(labelAngle=0)),  # Use 'Metric' as x-axis
+            y=alt.Y('Value:Q', title='Sum of Guesses ', scale=alt.Scale(domain=(0, df_total_guess_count["Value"].max() + 5))),
+            tooltip=[alt.Tooltip('Value:Q', title="Sum of Guesses")]
+        ).properties(
+            title="Sum of guesses",
+            width=400,
+            height=300
+        ).configure_mark(
+            color=alt.Gradient(
+                gradient="linear",
+                stops=[               
+                    alt.GradientStop(color="#FF0000", offset=0),    # Red
+                    alt.GradientStop(color="#FF7F00", offset=0.16), # Orange
+                    alt.GradientStop(color="#FFFF00", offset=0.33), # Yellow
+                    alt.GradientStop(color="#00FF00", offset=0.5),  # Green
+                    alt.GradientStop(color="#0000FF", offset=0.66), # Blue
+                    alt.GradientStop(color="#4B0082", offset=0.83), # Indigo
+                    alt.GradientStop(color="#8B00FF", offset=1)     # Violet
+                ],
+                x1=1, x2=1, y1=1, y2=0
+            )
+        ).configure_view(
+            strokeWidth=0  # Remove outer border around chart
+        )
+        st.altair_chart(bar_chart, use_container_width=True)
