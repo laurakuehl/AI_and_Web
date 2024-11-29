@@ -1,7 +1,7 @@
-import time
-import streamlit as st # type: ignore
-import pandas as pd # type: ignore
-import altair as alt # type: ignore
+import streamlit as st 
+import pandas as pd 
+import altair as alt 
+import matplotlib.pyplot as plt
 
 
 def statistics():
@@ -99,9 +99,24 @@ def statistics():
 
         # Display the chart
         st.altair_chart(bar_chart_rounds, use_container_width=True)
+    
+    # Display the ratings of the guesses as a line chart
+    if st.session_state["ratings"]:
+        ratings = st.session_state["ratings"]
+        # Fix missing data by interpolation
+        ratings = pd.Series(ratings).interpolate().tolist()
 
-    # Create a DataFrame with a single value for total inputs count
-        # Updated: Create a bar chart for the sum of the Guess Count column
+        # Create the plot
+        fig, ax = plt.subplots()
+        ax.plot(ratings, marker="o", linestyle="-")
+        ax.set_title("Ratings of your guesses")
+        ax.set_xlabel("Guess Index")
+        ax.set_ylabel("Rating")
+
+        # Display the plot in Streamlit
+        st.pyplot(fig)
+
+    # Create a bar chart for the sum of the Guess Count column
     if not df_category.empty:
         df_total_guess_count = pd.DataFrame({
             'Metric': ['Sum of Guess Count'],  # Updated label

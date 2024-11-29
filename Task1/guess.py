@@ -34,6 +34,8 @@ def guessing_page():
         st.session_state["category"] = None
     if "category_guesses" not in st.session_state:
         st.session_state["category_guesses"] = {category: [] for category in CATEGORIES}
+    if "ratings" not in st.session_state:
+        st.session_state["ratings"] = []
 
     st.markdown('<div class="title">Who Am I?</div>', unsafe_allow_html=True)
 
@@ -75,22 +77,37 @@ def guessing_page():
             prompt=f"""
                 The person or character that has to be guessed is: {st.session_state["character"]}.
                 This is the chat history: {st.session_state["chat_history"]}.
-                The contestant now asked or guessed: {user_message}.
-                Give a yes/no answer and estimate the quality of the guess.
+                The contestant now asked or guessed: {user_message}. 
 
-                If the contestant guessed the right character or person, answer: 
-                'HOORAY, you guessed right!'
+                Give an answer to the contestent and rate the question or guess on a scale from 1 to ten.
+
+
+                The answer to the contestant:
+                - If it's a question, provide a yes/no answer and feedback on whether the question is helpful.
+                - If it's a guess, provide feedback on whether it's correct, close, or completely off-track.
+                - If the contestant guessed the right character or person, answer: 
+                    'HOORAY, you guessed right!'
+                
+                The rating:
+                - a number from 1 to 10
+
+                Give me the answer and the rating, seperated by a '|'. 
+                (e.g.: 'Yes, I am a person. This question is helpful as it narrows down the possibilities by confirming the nature of the character. | 3')
             """,
             system_instruction="You are the game master of a guessing game."
         )
         response = oai_response.choices[0].message.content.strip()
+        answer, rating = response.split(" | ", 1)
+
+        # Add rating to ratings
+        st.session_state["ratings"].append(rating)
 
         # Add LLM response to chat history
-        st.session_state["chat_history"].append(("bot", response))
+        st.session_state["chat_history"].append(("bot", answer))
         with st.chat_message("bot"):
-            st.markdown(response)
+            st.markdown(answer)
         
-        if "hooray" in response.lower():
+        if "hooray" in answer.lower():
             st.session_state["category_guesses"][st.session_state["category"]].append(st.session_state["guess_count"])
             st.balloons()
     
