@@ -1,12 +1,18 @@
 from whoosh import index
+from whoosh.qparser import QueryParser
 
+
+# open Index
 ix = index.open_dir("indexdir") 
 
-# Retrieving data
-from whoosh.qparser import QueryParser
+# Input for search
+query_string = input("Enter search term: ")
+
+# start search
+
 with ix.searcher() as searcher:
-    # find entries with the words 'first' AND 'last'
-    query = QueryParser("content", ix.schema).parse("first last")
+    
+    query = QueryParser("content", ix.schema).parse(query_string)
     results = searcher.search(query)
 
     # print all results

@@ -7,7 +7,7 @@ from whoosh.fields import *
 #
 # The "stored" attribute is used for all parts that we want to be able to fully retrieve from the index
 #
-# schema = Schema(title=TEXT(stored=True), content=TEXT)
+schema = Schema(title=TEXT(stored=True), content=TEXT)
 
 # Create an index in the directory indexdr (the directory must already exist!)
 ix = create_in("indexdir", schema)
