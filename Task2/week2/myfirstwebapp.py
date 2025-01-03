@@ -11,12 +11,7 @@ ix = open_dir(index_dir)
 @app.route("/")
 def home():
     """Display search form."""
-    return """
-        <form action="/search" method="get">
-            <input type="text" name="q" placeholder="Search for...">
-            <button type="submit">Search</button>
-        </form>
-    """
+    return render_template("home.html")
 
 @app.route("/search")
 def search():

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Engine</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f8ff;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+        }
+        .container {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 4rem; /* Größerer Titel */
+            font-weight: bold; /* Dickerer Text */
+            color: #297c2a;
+            margin-bottom: 2rem;
+            margin-top: -50px; /* Searchly nach oben verschieben */
+        }
+        .input-group {
+            width: 100%;
+            max-width: 600px;
+        }
+        .form-control {
+            font-size: 1.2rem;
+            padding: 1rem;
+            border-radius: 10px;
+        }
+        .btn {
+            font-size: 1.2rem;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            background-color: #007bff;
+            border: none;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Searchly</h1>
+        <form action="/search" method="get">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="q" placeholder="Search for something..." required>
+                <button class="btn" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
