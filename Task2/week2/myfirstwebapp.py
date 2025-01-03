@@ -5,7 +5,7 @@ from whoosh.qparser import QueryParser
 app = Flask(__name__)
 
 # Open Whoosh index
-index_dir = "indexdir"
+index_dir = "Task2/week2/indexdir"
 ix = open_dir(index_dir)
 
 @app.route("/")

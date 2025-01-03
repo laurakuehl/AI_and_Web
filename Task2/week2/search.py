@@ -3,7 +3,7 @@ from whoosh.qparser import QueryParser
 
 
 # open Index
-ix = index.open_dir("indexdir") 
+ix = index.open_dir("Task2/week2/indexdir") 
 
 # Input for search
 query_string = input("Enter search term: ")
