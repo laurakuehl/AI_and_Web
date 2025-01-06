@@ -6,12 +6,12 @@ from whoosh.fields import Schema, TEXT, ID
 import os
 
 # Prefix und Start-URL
-prefix = 'https://vm009.rz.uos.de/crawl/index.html'
+prefix = 'https://vm009.rz.uos.de/crawl/'
 
 #start_url = prefix+'home.html'
-start_url = prefix
+start_url = prefix + 'index.html'
 # open woosh index
-index_dir = "Task2/week1/indexdir"
+index_dir = "Task2/week2/indexdir"
 
 
 # Schema definieren
