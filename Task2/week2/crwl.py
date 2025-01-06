@@ -67,7 +67,7 @@ while agenda:
 
     
     # remove problematic tags
-    for script_or_style in soup.find_all(['script', 'style', 'noscript', 'header']):
+    for script_or_style in soup.find_all(['script', 'style', 'noscript', 'header', 'title']):
         script_or_style.decompose()  # remove the tags
 
     # extract only text
