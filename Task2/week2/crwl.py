@@ -73,7 +73,6 @@ while agenda:
     # extract only text
     content = soup.get_text(separator=" ", strip=True)  # separator=" check if the text is good seperated
     content = content[:1000]  # only the first 1000 elements
-    print(content)
 
     # Create a snippet (first 150 characters or a meaningful preview)
     snippet = content[:150] + "..." if len(content) > 150 else content
