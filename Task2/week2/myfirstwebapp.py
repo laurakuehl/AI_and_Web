@@ -45,9 +45,9 @@ def search():
             ]
             #if no result is found, use autocorrecter and search again for right spelling
             if not results:
-                blob = TextBlob(q.text)
+                blob = TextBlob(query)
                 corrected_query = blob.correct()
-                print(f"No result for {q.text}, searching for {corrected_query}")
+                print(f"No result for {query}, searching for {corrected_query}")
                 search_results = searcher.search(Term("content", corrected_query.string))
                 results = [
                     {"title": r["title"], "url": r["url"]}
