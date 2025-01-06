@@ -3,11 +3,14 @@ from whoosh.index import open_dir
 from whoosh.qparser import QueryParser
 from textblob import TextBlob
 from whoosh.query import Term
-
+from pathlib import Path
 app = Flask(__name__)
 
-# Open Whoosh index
-index_dir = "indexdir"
+# Get the directory of week2
+current_dir = Path(__file__).parent
+
+# Construct the path to the index directory
+index_dir = current_dir / "indexdir"
 ix = open_dir(index_dir)
 
 @app.route("/")

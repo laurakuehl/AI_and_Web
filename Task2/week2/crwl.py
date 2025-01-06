@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from pathlib import Path
 from whoosh.index import create_in, open_dir
 from whoosh.writing import AsyncWriter
 from whoosh.fields import Schema, TEXT, ID
@@ -10,8 +11,12 @@ prefix = 'https://vm009.rz.uos.de/crawl/'
 
 #start_url = prefix+'home.html'
 start_url = prefix + 'index.html'
-# open woosh index
-index_dir = "indexdir"
+
+# Get the directory of week2
+current_dir = Path(__file__).parent
+
+# Construct the path to the index directory
+index_dir = current_dir / "indexdir"
 
 
 # Schema definieren
@@ -62,14 +67,13 @@ while agenda:
 
     
     # remove problematic tags
-    for script_or_style in soup(['script', 'style', 'noscript']):
+    for script_or_style in soup.find_all(['script', 'style', 'noscript', 'header']):
         script_or_style.decompose()  # remove the tags
-
-    
 
     # extract only text
     content = soup.get_text(separator=" ", strip=True)  # separator=" check if the text is good seperated
     content = content[:1000]  # only the first 1000 elements
+    print(content)
 
     # Create a snippet (first 150 characters or a meaningful preview)
     snippet = content[:150] + "..." if len(content) > 150 else content
