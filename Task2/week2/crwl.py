@@ -33,11 +33,16 @@ except:
 agenda = [start_url]
 
 visited = set()
-
+stored_urls = []
 while agenda:
     url = agenda.pop() # next URL from the agenda
-    if url in visited:
-        continue  # Skip URLs you've already visited
+    
+    #check whether URL is already represented in index to avoid doubles when crawler runs multiple times 
+    with ix.searcher() as searcher:
+        for docnum, fields in enumerate(searcher.all_stored_fields()):
+            stored_urls.append(fields.get('url', 'No URL'))            
+    if url in stored_urls: 
+        continue  
 
     print("Get ",url)
     try:

@@ -1,2 +1,5 @@
 flask
 whoosh
+textblob
+requests
+beautifulsoup4
