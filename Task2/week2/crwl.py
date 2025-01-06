@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from pathlib import Path
 from whoosh.index import create_in, open_dir
 from whoosh.writing import AsyncWriter
 from whoosh.fields import Schema, TEXT, ID
@@ -10,15 +11,20 @@ prefix = 'https://vm009.rz.uos.de/crawl/'
 
 #start_url = prefix+'home.html'
 start_url = prefix + 'index.html'
-# open woosh index
-index_dir = "Task2/week2/indexdir"
+
+# Get the directory of week2
+current_dir = Path(__file__).parent
+
+# Construct the path to the index directory
+index_dir = current_dir / "indexdir"
 
 
 # Schema definieren
 schema = Schema(
     title=TEXT(stored=True),  # Titel speichern
     content=TEXT(stored=True),  # Content speichern
-    url=ID(stored=True)  # URL speichern
+    url=ID(stored=True),  # URL speichern
+    snippet=TEXT(stored=True)
 )
 
 if not os.path.exists(index_dir):
@@ -32,11 +38,16 @@ except:
 agenda = [start_url]
 
 visited = set()
-
+stored_urls = []
 while agenda:
     url = agenda.pop() # next URL from the agenda
-    if url in visited:
-        continue  # Skip URLs you've already visited
+    
+    #check whether URL is already represented in index to avoid doubles when crawler runs multiple times 
+    with ix.searcher() as searcher:
+        for docnum, fields in enumerate(searcher.all_stored_fields()):
+            stored_urls.append(fields.get('url', 'No URL'))            
+    if url in stored_urls: 
+        continue  
 
     print("Get ",url)
     try:
@@ -56,14 +67,15 @@ while agenda:
 
     
     # remove problematic tags
-    for script_or_style in soup(['script', 'style', 'noscript']):
+    for script_or_style in soup.find_all(['script', 'style', 'noscript', 'header']):
         script_or_style.decompose()  # remove the tags
-
-    
 
     # extract only text
     content = soup.get_text(separator=" ", strip=True)  # separator=" check if the text is good seperated
     content = content[:1000]  # only the first 1000 elements
+
+    # Create a snippet (first 150 characters or a meaningful preview)
+    snippet = content[:150] + "..." if len(content) > 150 else content
 
     # debugging
     print(f"Content length: {len(content)}")
@@ -77,7 +89,7 @@ while agenda:
      # safe in woosh index
     writer = AsyncWriter(ix)
     try:
-        writer.add_document(title=title, content=content, url=url)
+        writer.add_document(title=title, content=content, url=url, snippet=snippet)
         writer.commit()
         print(f"Dokument gespeichert: {title} ({url})")
     except Exception as e:

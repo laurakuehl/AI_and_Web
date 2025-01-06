@@ -4,14 +4,19 @@ from whoosh.index import create_in, open_dir
 from whoosh.writing import AsyncWriter
 from whoosh.fields import Schema, TEXT, ID
 import os
+from pathlib import Path
 
 # Prefix und Start-URL
 prefix = 'https://vm009.rz.uos.de/crawl/index.html'
 
 #start_url = prefix+'home.html'
 start_url = prefix
-# open woosh index
-index_dir = "Task2/week1/indexdir"
+
+# Get the directory of week1
+current_dir = Path(__file__).parent
+
+# Construct the path to the index directory
+index_dir = current_dir / "indexdir"
 
 
 # Schema definieren
