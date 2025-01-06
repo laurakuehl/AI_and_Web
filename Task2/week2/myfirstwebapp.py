@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template
 from whoosh.index import open_dir
-from whoosh.qparser import QueryParser
+from whoosh.qparser import MultifieldParser
+from whoosh import scoring
 
 app = Flask(__name__)
 
@@ -20,9 +21,15 @@ def search():
     results = []
 
     if query:
-        with ix.searcher() as searcher:
-            qp = QueryParser("content", ix.schema)
+        with ix.searcher(weighting=scoring.BM25F()) as searcher:
+
+            # weights for fields: title is twice as important as content
+            field_weights = {"title": 2.0, "content": 1.0}
+            
+            # MultifieldParser for querying multiple fields
+            qp = MultifieldParser(["title", "content"], ix.schema, fieldboosts=field_weights)
             q = qp.parse(query)
+
             search_results = searcher.search(q)
             results = [
                 {"title": r["title"], "url": r["url"]}
