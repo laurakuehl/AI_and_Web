@@ -11,14 +11,15 @@ prefix = 'https://vm009.rz.uos.de/crawl/'
 #start_url = prefix+'home.html'
 start_url = prefix + 'index.html'
 # open woosh index
-index_dir = "Task2/week2/indexdir"
+index_dir = "indexdir"
 
 
 # Schema definieren
 schema = Schema(
     title=TEXT(stored=True),  # Titel speichern
     content=TEXT(stored=True),  # Content speichern
-    url=ID(stored=True)  # URL speichern
+    url=ID(stored=True),  # URL speichern
+    snippet=TEXT(stored=True)
 )
 
 if not os.path.exists(index_dir):
@@ -65,6 +66,9 @@ while agenda:
     content = soup.get_text(separator=" ", strip=True)  # separator=" check if the text is good seperated
     content = content[:1000]  # only the first 1000 elements
 
+    # Create a snippet (first 150 characters or a meaningful preview)
+    snippet = content[:150] + "..." if len(content) > 150 else content
+
     # debugging
     print(f"Content length: {len(content)}")
     print(f"Content preview: {content[:200]}...")
@@ -77,7 +81,7 @@ while agenda:
      # safe in woosh index
     writer = AsyncWriter(ix)
     try:
-        writer.add_document(title=title, content=content, url=url)
+        writer.add_document(title=title, content=content, url=url, snippet=snippet)
         writer.commit()
         print(f"Dokument gespeichert: {title} ({url})")
     except Exception as e:

@@ -5,7 +5,7 @@ from whoosh.qparser import QueryParser
 app = Flask(__name__)
 
 # Open Whoosh index
-index_dir = "Task2/week2/indexdir"
+index_dir = "indexdir"
 ix = open_dir(index_dir)
 
 @app.route("/")
@@ -23,9 +23,9 @@ def search():
         with ix.searcher() as searcher:
             qp = QueryParser("content", ix.schema)
             q = qp.parse(query)
-            search_results = searcher.search(q)
+            search_results = searcher.search(q, terms=True)
             results = [
-                {"title": r["title"], "url": r["url"]}
+                {"title": r["title"], "url": r["url"],"snippet": r.get("snippet", "No snippet available."),"preview": r.highlights("content")}
                 for r in search_results
             ]
 
