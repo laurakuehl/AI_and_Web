@@ -1,5 +1,5 @@
-import streamlit as st
-from guessing import guessing_page 
+import streamlit as st # type: ignore
+from guessing_chat import guessing_page 
 from stats import statistics
 
 # Adding a sidebar with a page selection dropdown
