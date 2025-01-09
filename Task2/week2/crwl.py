@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from pathlib import Path
 from whoosh.index import create_in, open_dir
 from whoosh.writing import AsyncWriter
-from whoosh.fields import Schema, TEXT, ID
+from whoosh.fields import Schema, TEXT, ID, NGRAM
 import os
 
 # Prefix und Start-URL
@@ -20,8 +20,8 @@ index_dir = current_dir / "indexdir"
 
 # Schema definieren
 schema = Schema(
-    title=TEXT(stored=True),  # Titel speichern
-    content=TEXT(stored=True),  # Content speichern
+    title=NGRAM(stored=True),  # Use N-grams for partial matching in the title
+    content=NGRAM(stored=True),  # Use N-grams for partial matching in the content
     url=ID(stored=True),  # URL speichern
     snippet=TEXT(stored=True)
 )

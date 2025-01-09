@@ -7,6 +7,7 @@ from pathlib import Path
 from whoosh.qparser import MultifieldParser
 from whoosh import scoring
 from whoosh.highlight import HtmlFormatter, ContextFragmenter, WholeFragmenter
+from whoosh.analysis import RegexTokenizer, LowercaseFilter
 
 app = Flask(__name__)
 
@@ -34,9 +35,15 @@ def search():
             # weights for fields: title is twice as important as content
             field_weights = {"title": 2.0, "content": 1.0}
             
+            # Create a searcher with a standard tokenizer (non-N-gram)
+            # Preprocess the query using a custom analyzer
+            search_analyzer = RegexTokenizer() | LowercaseFilter()
+            processed_query = " ".join(token.text for token in search_analyzer(query))
+
             # MultifieldParser for querying multiple fields
             qp = MultifieldParser(["title", "content"], ix.schema, fieldboosts=field_weights)
-            q = qp.parse(query)
+            # qp.add_plugin(search_analyzer)  # Use this for raw query parsing
+            q = qp.parse(processed_query)
 
             search_results = searcher.search(q, terms=True)
 
