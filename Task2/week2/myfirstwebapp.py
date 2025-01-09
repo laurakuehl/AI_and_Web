@@ -10,7 +10,7 @@ from whoosh.highlight import HtmlFormatter, ContextFragmenter, WholeFragmenter
 
 app = Flask(__name__)
 
-# Get the directory of week2
+# Get the parent directory
 current_dir = Path(__file__).parent
 
 # Construct the path to the index directory
