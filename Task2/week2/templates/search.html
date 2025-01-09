@@ -55,6 +55,10 @@
         .back-btn:hover {
             color: #0056b3;
         }
+        .highlight {
+        background-color: yellow;
+        font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -64,7 +68,7 @@
             {% for result in results %}
                 <li class="result-item">
                     <a href="{{ result['url'] }}">{{ result['title'] }}</a>
-                    <p><strong>Teaser:</strong> {{ result.snippet }}</p>
+                    <p><strong>Teaser:</strong> {{ result.preview|safe }}</p>
                 </li>
             {% else %}
                 <li class="result-item">

@@ -7,10 +7,9 @@ from whoosh.fields import Schema, TEXT, ID
 import os
 
 # Prefix und Start-URL
-prefix = 'https://vm009.rz.uos.de/crawl/'
-
+prefix = 'https://www.uni-osnabrueck.de/'
 #start_url = prefix+'home.html'
-start_url = prefix + 'index.html'
+start_url = prefix + 'startseite/'
 
 # Get the directory of week2
 current_dir = Path(__file__).parent

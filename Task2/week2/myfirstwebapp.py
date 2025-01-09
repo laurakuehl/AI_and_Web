@@ -6,6 +6,7 @@ from whoosh.query import Term
 from pathlib import Path
 from whoosh.qparser import MultifieldParser
 from whoosh import scoring
+from whoosh.highlight import HtmlFormatter, ContextFragmenter, WholeFragmenter
 
 app = Flask(__name__)
 
@@ -38,6 +39,11 @@ def search():
             q = qp.parse(query)
 
             search_results = searcher.search(q, terms=True)
+
+            # Customize highlights
+            search_results.formatter = HtmlFormatter(tagname="span", classname="highlight")  # Use custom span class
+            search_results.fragmenter = WholeFragmenter()  # Keeps the entire field content
+            search_results.fragmenter = ContextFragmenter(maxchars=100, surround=100)  # 20 chars around matches
 
             results = [
                 {"title": r["title"], "url": r["url"],"snippet": r.get("snippet", "No snippet available."),"preview": r.highlights("content")}
