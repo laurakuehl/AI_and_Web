@@ -18,14 +18,14 @@ current_dir = Path(__file__).parent
 index_dir = current_dir / "indexdir"
 
 
-# Schema definieren
+#Define the schema for the Whoosh index
 schema = Schema(
-    title=TEXT(stored=True),  # Titel speichern
-    content=TEXT(stored=True),  # Content speichern
-    url=ID(stored=True),  # URL speichern
-    snippet=TEXT(stored=True)
+    title=TEXT(stored=True),  # - 'title': Stores the title of the web page
+    content=TEXT(stored=True),  # - 'content': Stores the main text content of the web page
+    url=ID(stored=True),  # - 'url': Stores the URL of the web page
+    snippet=TEXT(stored=True) # - 'snippet': Stores a short preview or snippet of the content
 )
-
+# Create the index directory if it does not already exist
 if not os.path.exists(index_dir):
     os.mkdir(index_dir)
 
@@ -34,10 +34,12 @@ try:
 except:
     ix = create_in(index_dir, schema)  # create index if not existed
 
-agenda = [start_url]
+agenda = [start_url] # Initialize the agenda (queue) with the starting URL
 
-visited = set()
-stored_urls = []
+visited = set() # Initialize a set to keep track of visited URLs to avoid re-crawling
+stored_urls = [] # Initialize a list to store URLs already in the index
+
+# Start the web crawling loop
 while agenda:
     url = agenda.pop() # next URL from the agenda
     

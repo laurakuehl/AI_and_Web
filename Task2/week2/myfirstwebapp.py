@@ -25,8 +25,8 @@ def home():
 @app.route("/search")
 def search():
     """Perform a search and display results."""
-    query = request.args.get("q", "")
-    results = []
+    query = request.args.get("q", "") # Get the search query from the user
+    results = [] # Initialize an empty list for storing search results
 
     if query:
         with ix.searcher(weighting=scoring.BM25F()) as searcher:
@@ -38,7 +38,7 @@ def search():
             qp = MultifieldParser(["title", "content"], ix.schema, fieldboosts=field_weights)
             q = qp.parse(query)
 
-            search_results = searcher.search(q, terms=True)
+            search_results = searcher.search(q, terms=True) # Perform the search and retrieve matching results
 
             # Customize highlights
             search_results.formatter = HtmlFormatter(tagname="span", classname="highlight")  # Use custom span class
@@ -47,7 +47,7 @@ def search():
 
             results = [
                 {"title": r["title"], "url": r["url"],"snippet": r.get("snippet", "No snippet available."),"preview": r.highlights("content")}
-                for r in search_results
+                for r in search_results # Format results to include title, URL, and snippet
             ]
             #if no result is found, use autocorrecter and search again for right spelling
             if not results:
@@ -59,8 +59,8 @@ def search():
                     {"title": r["title"], "url": r["url"]}
                     for r in search_results
                 ]
-    return render_template("search.html", query=query, results=results)
+    return render_template("search.html", query=query, results=results) # Render the search results template
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True) # Run the Flask app in debug mode
