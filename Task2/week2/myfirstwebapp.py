@@ -17,6 +17,11 @@ current_dir = Path(__file__).parent
 index_dir = current_dir / "indexdir"
 ix = open_dir(index_dir)
 
+import traceback
+@app.errorhandler(500)
+def internal_error(exception):
+   return "<pre>"+traceback.format_exc()+"</pre>"
+
 @app.route("/")
 def home():
     """Display search form."""
