@@ -9,7 +9,6 @@ from whoosh import scoring
 from whoosh.highlight import HtmlFormatter, ContextFragmenter, WholeFragmenter
 
 app = Flask(__name__)
-app.config['APPLICATION_ROOT'] = '/u044/myfirstreverse.wsgi'
 
 # Get the parent directory
 current_dir = Path(__file__).parent
