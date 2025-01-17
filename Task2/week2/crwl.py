@@ -11,7 +11,7 @@ prefix = 'https://www.uni-osnabrueck.de/'
 #start_url = prefix+'home.html'
 start_url = prefix + 'startseite/'
 
-# Get the directory of week2
+# Get the parent directory
 current_dir = Path(__file__).parent
 
 # Construct the path to the index directory
@@ -25,12 +25,13 @@ schema = Schema(
     url=ID(stored=True),  # - 'url': Stores the URL of the web page
     snippet=TEXT(stored=True) # - 'snippet': Stores a short preview or snippet of the content
 )
+
 # Create the index directory if it does not already exist
 if not os.path.exists(index_dir):
     os.mkdir(index_dir)
 
 try:
-    ix = open_dir(index_dir)  # try to oopen the index
+    ix = open_dir(index_dir)  # try to open the index
 except:
     ix = create_in(index_dir, schema)  # create index if not existed
 
@@ -57,7 +58,7 @@ while agenda:
         if r.status_code != 200:
             continue
     except requests.RequestException as e:
-        print("Fehler beim Abrufen von {}: {}".format(url, e))
+        print("Error when retrieving {}: {}".format(url, e))
         continue
 
     visited.add(url)  # mark URL
@@ -92,9 +93,9 @@ while agenda:
     try:
         writer.add_document(title=title, content=content, url=url, snippet=snippet)
         writer.commit()
-        print(f"Dokument gespeichert: {title} ({url})")
+        print(f"Document saved: {title} ({url})")
     except Exception as e:
-        print(f"Fehler beim Speichern von {url}: {e}")
+        print(f"Error when saving {url}: {e}")
 
     # extract all links and add them to the agenda
     for link in soup.find_all('a', href=True):

@@ -47,9 +47,10 @@ def search():
 
             results = [
                 {"title": r["title"], "url": r["url"],"snippet": r.get("snippet", "No snippet available."),"preview": r.highlights("content")}
-                for r in search_results # Format results to include title, URL, and snippet
+                for r in search_results # Format results to include title, URL, snippet and preview
             ]
-            #if no result is found, use autocorrecter and search again for right spelling
+
+            #if no result is found, use autocorrector and search again for right spelling
             if not results:
                 blob = TextBlob(query)
                 corrected_query = blob.correct()
