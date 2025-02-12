@@ -4,6 +4,7 @@
 from flask import Flask, request, render_template, jsonify
 import json
 import requests
+import time
 
 # Class-based application configuration
 class ConfigClass(object):
@@ -20,10 +21,25 @@ app.app_context().push()  # create an app context before initializing db
 HUB_URL = 'http://localhost:5555'
 HUB_AUTHKEY = '1234567890'
 CHANNEL_AUTHKEY = '0987654321'
-CHANNEL_NAME = "The One and Only Channel"
+CHANNEL_NAME = "Mind Benders"
 CHANNEL_ENDPOINT = "http://localhost:5001" # don't forget to adjust in the bottom of the file
 CHANNEL_FILE = 'data/messages.json'
 CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
+MAX_MESSAGES = 50
+
+# define welcome message
+WELCOME_MESSAGE = {
+    "content": 
+        """
+        Welcome to Mind Benders: Fun Hypotheticals & 'What If?' Scenarios.
+        Get creative and discuss about various hypothetical scenarios!
+
+        Kick-off:  What if aliens landed tomorrow? What's your survival plan?
+        """,
+    "sender": "System",
+    "timestamp": int(time.time()),
+    "extra": None
+}
 
 @app.cli.command('register')
 def register_command():
@@ -96,6 +112,11 @@ def send_message():
                      'timestamp': message['timestamp'],
                      'extra': extra,
                      })
+    
+    # enforce message limit
+    if len(messages) > MAX_MESSAGES:
+        messages = messages[-MAX_MESSAGES:]
+
     save_messages(messages)
     return "OK", 200
 
@@ -110,6 +131,9 @@ def read_messages():
     except json.decoder.JSONDecodeError:
         messages = []
     f.close()
+    # add welcome message if there are no messages
+    if len(messages)==0:
+        messages.append(WELCOME_MESSAGE)
     return messages
 
 def save_messages(messages):
