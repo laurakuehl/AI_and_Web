@@ -5,6 +5,7 @@ from flask import Flask, request, render_template, jsonify
 import json
 import requests
 import time
+from better_profanity import profanity
 
 # Class-based application configuration
 class ConfigClass(object):
@@ -26,6 +27,9 @@ CHANNEL_ENDPOINT = "http://localhost:5001" # don't forget to adjust in the botto
 CHANNEL_FILE = 'data/messages.json'
 CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
 MAX_MESSAGES = 50
+
+# load profanity filter
+profanity.load_censor_words() # default list
 
 # define welcome message
 WELCOME_MESSAGE = {
@@ -107,6 +111,11 @@ def send_message():
         extra = message['extra']
     # add message to messages
     messages = read_messages()
+
+    # profanity filtering
+    if profanity.contains_profanity(message["content"]):
+        message["content"] = profanity.censor(message["content"]) # replaces bad words with ****
+
     messages.append({'content': message['content'],
                      'sender': message['sender'],
                      'timestamp': message['timestamp'],
