@@ -22,7 +22,7 @@ HUB_AUTHKEY = '1234567890'
 CHANNEL_AUTHKEY = '0987654321'
 CHANNEL_NAME = "The One and Only Channel"
 CHANNEL_ENDPOINT = "http://localhost:5001" # don't forget to adjust in the bottom of the file
-CHANNEL_FILE = 'messages.json'
+CHANNEL_FILE = 'data/messages.json'
 CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
 
 @app.cli.command('register')

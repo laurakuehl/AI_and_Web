@@ -1,2 +1,8 @@
 # instances for example from hub.py
 instance
+
+# pycache
+__pycache__
+
+# messages
+data/*
