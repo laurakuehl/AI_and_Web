@@ -42,7 +42,7 @@ WELCOME_MESSAGE = {
         """,
     "sender": "System",
     "timestamp": int(time.time()),
-    "extra": None
+    "extra": "welcome"
 }
 
 @app.cli.command('register')
@@ -140,9 +140,10 @@ def read_messages():
     except json.decoder.JSONDecodeError:
         messages = []
     f.close()
-    # add welcome message if there are no messages
-    if len(messages)==0:
-        messages.append(WELCOME_MESSAGE)
+    # add welcome message
+    if len(messages)==0 or messages[0].get("extra") != "welcome":
+        messages.insert(0, WELCOME_MESSAGE) # insert at the beginning
+        save_messages(messages)
     return messages
 
 def save_messages(messages):
