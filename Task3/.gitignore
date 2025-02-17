@@ -3,6 +3,3 @@ instance
 
 # pycache
 __pycache__
-
-# messages
-data/*
