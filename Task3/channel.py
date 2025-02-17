@@ -12,7 +12,7 @@ class ConfigClass(object):
     """ Flask application config """
 
     # Flask settings
-    SECRET_KEY = 'This is an INSECURE secret!! DO NOT use this in production!!'
+    SECRET_KEY = 'This is an INSECURE secret!! DO NOT use this in production!!' # change to something random, no matter what
 
 # Create Flask app
 app = Flask(__name__)
@@ -24,7 +24,7 @@ HUB_AUTHKEY = '1234567890'
 CHANNEL_AUTHKEY = '0987654321'
 CHANNEL_NAME = "Mind Benders"
 CHANNEL_ENDPOINT = "http://localhost:5001" # don't forget to adjust in the bottom of the file
-CHANNEL_FILE = 'data/messages.json'
+CHANNEL_FILE = 'messages.json'
 CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
 MAX_MESSAGES = 50
 
