@@ -4,15 +4,16 @@
 from flask import Flask, request, render_template, jsonify
 import json
 import requests
-import time
+import datetime
 from better_profanity import profanity
+from scenario import load_scenarios, should_send_scenario, generate_scenario
 
 # Class-based application configuration
 class ConfigClass(object):
     """ Flask application config """
 
     # Flask settings
-    SECRET_KEY = 'This is an INSECURE secret!! DO NOT use this in production!!' # change to something random, no matter what
+    SECRET_KEY = '1234rfcdse4567ujhbvfrt67890plmn' # change to something random, no matter what
 
 # Create Flask app
 app = Flask(__name__)
@@ -25,6 +26,7 @@ CHANNEL_AUTHKEY = '0987654321'
 CHANNEL_NAME = "Mind Benders"
 CHANNEL_ENDPOINT = "http://localhost:5001" # don't forget to adjust in the bottom of the file
 CHANNEL_FILE = 'messages.json'
+SCENARIO_FILE = 'scenarios.json'
 CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
 MAX_MESSAGES = 50
 
@@ -39,11 +41,16 @@ WELCOME_MESSAGE = {
         Get creative and discuss about various hypothetical scenarios!
 
         Kick-off:  What if aliens landed tomorrow? What's your survival plan?
+
+        Hint: If you need a new hypothetical, type 'new scenario'.
         """,
     "sender": "System",
-    "timestamp": int(time.time()),
+    "timestamp": datetime.datetime.now().isoformat(),
     "extra": "welcome"
 }
+
+# load scenarios
+SCENARIOS = load_scenarios(file=SCENARIO_FILE)
 
 @app.cli.command('register')
 def register_command():
@@ -126,6 +133,11 @@ def send_message():
     if len(messages) > MAX_MESSAGES:
         messages = messages[-MAX_MESSAGES:]
 
+    # check if it's the right time to send a "What if?" scenario
+    if should_send_scenario(messages):
+        bot_response = generate_scenario(SCENARIOS)
+        messages.append(bot_response)
+
     save_messages(messages)
     return "OK", 200
 
@@ -140,10 +152,12 @@ def read_messages():
     except json.decoder.JSONDecodeError:
         messages = []
     f.close()
+
     # add welcome message
     if len(messages)==0 or messages[0].get("extra") != "welcome":
         messages.insert(0, WELCOME_MESSAGE) # insert at the beginning
         save_messages(messages)
+
     return messages
 
 def save_messages(messages):
