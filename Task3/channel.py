@@ -42,9 +42,9 @@ WELCOME_MESSAGE = {
         """<strong>Welcome to Mind Benders: Fun Hypotheticals & 'What If?' Scenarios.</strong>
         Get creative and discuss about various hypothetical scenarios!
 
-        Kick-off:  What if aliens landed tomorrow? What's your survival plan?
+        <span class="green-text">Kick-off:  What if aliens landed tomorrow? What's your survival plan?</span>
 
-        Hint: If you need a new hypothetical, type 'new scenario'.
+        Hint: If you need a new hypothetical, type '<strong>new scenario</strong>'.
         """,
     "sender": "WhatIfBot",
     "timestamp": datetime.datetime.now().isoformat(),
