@@ -2,6 +2,7 @@
 ##
 
 from flask import Flask, request, render_template, jsonify
+from flask_cors import CORS
 import json
 import requests
 import datetime
@@ -20,6 +21,8 @@ app = Flask(__name__)
 app.config.from_object(__name__ + '.ConfigClass')  # configuration
 app.app_context().push()  # create an app context before initializing db
 
+CORS(app)
+
 HUB_URL = 'http://localhost:5555'
 HUB_AUTHKEY = '1234567890'
 CHANNEL_AUTHKEY = '0987654321'
@@ -37,14 +40,14 @@ profanity.load_censor_words() # default list
 WELCOME_MESSAGE = {
     "content": 
         """
-        Welcome to Mind Benders: Fun Hypotheticals & 'What If?' Scenarios.
+        <strong>Welcome to Mind Benders: Fun Hypotheticals & 'What If?' Scenarios.</strong>
         Get creative and discuss about various hypothetical scenarios!
 
         Kick-off:  What if aliens landed tomorrow? What's your survival plan?
 
         Hint: If you need a new hypothetical, type 'new scenario'.
         """,
-    "sender": "System",
+    "sender": "WhatIfBot",
     "timestamp": datetime.datetime.now().isoformat(),
     "extra": "welcome"
 }

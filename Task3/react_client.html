@@ -4,6 +4,107 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple React App: Show Channels</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* General body styling */
+        body {
+            background-color: #f0f8ff;
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        /* Chat container */
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Back button */
+        .back-btn {
+            margin-bottom: 10px;
+        }
+
+        /* Chat title */
+        .chat-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #297c2a;
+            margin-bottom: 15px;
+        }
+
+        /* Chat box */
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #e9f5ff;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        /* Individual messages */
+        .chat-message {
+            margin-bottom: 8px;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Sender name (bold) */
+        .message-sender {
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Timestamp */
+        .timestamp {
+            font-size: 0.8rem;
+            color: gray;
+            margin-left: 5px;
+        }
+
+        /* Message content */
+        .message-content {
+            font-weight: normal;
+        }
+
+        /* Input & send button */
+        .input-container {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            font-size: 1rem;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .send-btn {
+            font-size: 1rem;
+            padding: 10px 20px;
+            margin-left: 10px;
+            border-radius: 10px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+        }
+
+        .send-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <div id="root"></div>
@@ -14,7 +115,22 @@
 
     <script type="text/babel">
 
-        function ChannelList() {
+        function App() {
+            const [selectedChannel, setSelectedChannel] = React.useState(null);
+
+            return (
+                <div>
+                    <h1>Chat Client</h1>
+                    {!selectedChannel ? (
+                        <ChannelList onSelectChannel={setSelectedChannel} />
+                    ) : (
+                        <Chat channel={selectedChannel} onBack={() => setSelectedChannel(null)} />
+                    )}
+                </div>
+            );
+        }
+
+        function ChannelList({onSelectChannel}) { // accepts onSelectChannel as a prop
             // React component that shows a channel list
             // content is fetched from the university hub (works only on university network, use VPN)
             //
@@ -22,9 +138,13 @@
 
             React.useEffect(() => {
                 // Fetch list of channels
-                fetch("http://vm146.rz.uos.de/hub/channels") // university hub
+                fetch("http://127.0.0.1:5555/channels") // university hub
                     .then(response => response.json())
-                    .then(data => setChannels(data.channels));
+                    .then(data => {
+                        console.log("Fetched channels:", data);  // debugging output
+                        setChannels(data.channels);
+                    })
+                    .catch(error => console.error("Error fetching channels:", error));
             }, []);  // empty list here means that this effect will run only once (you can add a variable to run it on change)
 
             return (
@@ -32,7 +152,11 @@
                     <h2>Channel List</h2>
                     <ul>
                         {channels.map(channel => (
-                            <li key={channel.id}>
+                            <li 
+                                key={channel.id} 
+                                style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }} 
+                                onClick={() => onSelectChannel(channel)}
+                            >
                                 {channel.name} (URL: {channel.endpoint}, Type: {channel.type_of_service})
                             </li>
                         ))}
@@ -42,12 +166,90 @@
         }
 
         // main code: render the ChannelList component, add more components here
-        ReactDOM.render(
-            <div>
-                <h1>Chat client: List of channels</h1>
-                <ChannelList />
-            </div>,
-            document.getElementById('root'));
+        // ReactDOM.render(
+        //     <div>
+        //         <h1>Chat client: List of channels</h1>
+        //         <ChannelList />
+        //     </div>,
+        //     document.getElementById('root'));
+
+        function Chat({ channel, onBack }) {
+            const [messages, setMessages] = React.useState([]);
+            const [newMessage, setNewMessage] = React.useState("");
+            const [username, setUsername] = React.useState(localStorage.getItem("username") || "");
+
+            React.useEffect(() => {
+                const fetchMessages = () => {
+                    fetch(channel.endpoint, {
+                        headers: { Authorization: "authkey 0987654321" }
+                    })
+                        .then(response => response.json())
+                        .then(data => setMessages(data))
+                        .catch(error => console.error("Error fetching messages:", error));
+                };
+
+                fetchMessages();
+                const interval = setInterval(fetchMessages, 3000);  // Refresh every 3s
+                return () => clearInterval(interval);
+            }, [channel.endpoint]);
+
+            function sendMessage() {
+                if (!newMessage.trim()) return;
+                if (!username) return alert("Please enter your name!");
+
+                fetch(channel.endpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: "authkey 0987654321"
+                    },
+                    body: JSON.stringify({
+                        content: newMessage,
+                        sender: username,
+                        timestamp: Math.floor(Date.now() / 1000), // Send timestamp in seconds
+                    })
+                }).then(() => setNewMessage(""));
+            }
+
+            function formatTimestamp(timestamp) {
+                const date = new Date(timestamp * 1000);
+                return date.toLocaleString();
+            }
+
+            function formatMessage(text) {
+                return text.replace(/\n/g, "<br />");
+            }
+
+            return (
+                <div className="chat-container">
+                    <button className="btn btn-secondary back-btn" onClick={onBack}>&larr; Back to Channels</button>
+                    <h2 className="chat-title">{channel.name}</h2>
+
+                    <div className="chat-box">
+                        {messages.map((msg, index) => (
+                            <div key={index} className="chat-message">
+                                <span className="message-sender">{msg.sender}</span>
+                                <span className="timestamp"> ({formatTimestamp(msg.timestamp)})</span>:  
+                                <span dangerouslySetInnerHTML={{ __html: formatMessage(msg.content) }} className="message-content" />
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="input-container">
+                        <input 
+                            type="text" 
+                            className="form-control chat-input" 
+                            value={newMessage} 
+                            onChange={(e) => setNewMessage(e.target.value)} 
+                            placeholder="Type a message..." 
+                        />
+                        <button className="btn btn-primary send-btn" onClick={sendMessage}>Send</button>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
     </script>
 </body>
 </html>

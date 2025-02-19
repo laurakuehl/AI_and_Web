@@ -27,16 +27,16 @@ def should_send_scenario(messages, n_messages=10, keywords=["what should we disc
 
     # find the index of the last bot message
     last_bot_index = None
-    for i in range(len(messages) - 1, -1, -1):  # Iterate backwards
+    for i in range(len(messages) - 1, -1, -1):  # iterate backwards
         if messages[i]['sender'] == "WhatIfBot":
             last_bot_index = i
             break
     
     # extract messages sent after the last bot response
-    user_messages_since_bot = messages[last_bot_index + 1:]
+    messages_since_bot = messages[last_bot_index + 1:]
 
     # keyword trigger
-    for msg in user_messages_since_bot:
+    for msg in messages_since_bot:
         if any(keyword in msg['content'].lower() for keyword in keywords):
             return True
 
