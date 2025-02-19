@@ -92,18 +92,33 @@
             border: 1px solid #ccc;
         }
 
-        .send-btn {
+        .send-save-btn {
             font-size: 1rem;
             padding: 10px 20px;
             margin-left: 10px;
             border-radius: 10px;
-            background-color: #007bff;
+            background-color: #28a745;
             border: none;
             color: white;
         }
 
-        .send-btn:hover {
-            background-color: #0056b3;
+        .send-save-btn:hover {
+            background-color: #218838;
+        }
+
+        /* Username input styling */
+        .username-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .username-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
         }
     </style>
 </head>
@@ -178,6 +193,7 @@
             const [messages, setMessages] = React.useState([]);
             const [newMessage, setNewMessage] = React.useState("");
             const [username, setUsername] = React.useState(localStorage.getItem("username") || "");
+            const [tempUsername, setTempUsername] = React.useState(""); // temporary input for new users
 
             React.useEffect(() => {
                 const fetchMessages = () => {
@@ -193,6 +209,12 @@
                 const interval = setInterval(fetchMessages, 3000);  // Refresh every 3s
                 return () => clearInterval(interval);
             }, [channel.endpoint]);
+
+            function handleUsernameSubmit() {
+                if (!tempUsername.trim()) return; // prevent empty usernames
+                localStorage.setItem("username", tempUsername);
+                setUsername(tempUsername);
+            }
 
             function sendMessage() {
                 if (!newMessage.trim()) return;
@@ -240,29 +262,44 @@
                         {welcomeMessage && (
                             <div className="welcome-message" dangerouslySetInnerHTML={{ __html: formatMessage(welcomeMessage.content) }} />
                         )}
-
-                        <div className="chat-box">
-                            {chatMessages.map((msg, index) => (
-                                <div key={index} className="chat-message">
-                                    <span className="message-sender">{msg.sender}</span>
-                                    <span className="timestamp"> ({formatTimestamp(msg.timestamp)})</span>: 
-                                    <span>&nbsp;</span>
-                                    <span dangerouslySetInnerHTML={{ __html: formatMessage(msg.content) }} className="message-content" />
+                        
+                        {!username ? (
+                            <div className="username-input-container">
+                                <input
+                                    type="text"
+                                    className="form-control username-input"
+                                    value={tempUsername}
+                                    onChange={(e) => setTempUsername(e.target.value)}
+                                    placeholder="Enter your username..."
+                                />
+                                <button className="btn send-save-btn" onClick={handleUsernameSubmit}>Save</button>
+                            </div>
+                        ) : (
+                            <div>
+                                <div className="chat-box">
+                                    {chatMessages.map((msg, index) => (
+                                        <div key={index} className="chat-message">
+                                            <span className="message-sender">{msg.sender}</span>
+                                            <span className="timestamp"> ({formatTimestamp(msg.timestamp)})</span>: 
+                                            <span>&nbsp;</span>
+                                            <span dangerouslySetInnerHTML={{ __html: formatMessage(msg.content) }} className="message-content" />
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
 
-                        <div className="input-container">
-                            <input 
-                                type="text" 
-                                className="form-control chat-input" 
-                                value={newMessage} 
-                                onChange={(e) => setNewMessage(e.target.value)}
-                                onKeyDown={handleKeyPress} 
-                                placeholder="Type a message..." 
-                            />
-                            <button className="btn btn-primary send-btn" onClick={sendMessage}>Send</button>
-                        </div>
+                                <div className="input-container">
+                                    <input 
+                                        type="text" 
+                                        className="form-control chat-input" 
+                                        value={newMessage} 
+                                        onChange={(e) => setNewMessage(e.target.value)}
+                                        onKeyDown={handleKeyPress} 
+                                        placeholder="Type a message..." 
+                                    />
+                                    <button className="btn btn-primary send-save-btn" onClick={sendMessage}>Send</button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             );
