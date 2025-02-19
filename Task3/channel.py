@@ -39,8 +39,7 @@ profanity.load_censor_words() # default list
 # define welcome message
 WELCOME_MESSAGE = {
     "content": 
-        """
-        <strong>Welcome to Mind Benders: Fun Hypotheticals & 'What If?' Scenarios.</strong>
+        """<strong>Welcome to Mind Benders: Fun Hypotheticals & 'What If?' Scenarios.</strong>
         Get creative and discuss about various hypothetical scenarios!
 
         Kick-off:  What if aliens landed tomorrow? What's your survival plan?
