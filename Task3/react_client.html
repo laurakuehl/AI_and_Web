@@ -243,7 +243,10 @@
             }
 
             function formatMessage(text) {
-                return text.replace(/\n/g, "<br />");
+                return text
+                    .replace(/\*(.*?)\*/g, "<i>$1</i>")  // convert *word* to <i>word</i>
+                    .replace(/_(.*?)_/g, "<strong>$1</strong>")   // convert _word_ to <strong>word</strong>
+                    .replace(/\n/g, "<br />");         // preserve breake lines
             }
 
             function handleKeyPress(event) {

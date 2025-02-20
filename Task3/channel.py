@@ -31,7 +31,7 @@ CHANNEL_ENDPOINT = "http://localhost:5001" # don't forget to adjust in the botto
 CHANNEL_FILE = 'messages.json'
 SCENARIO_FILE = 'scenarios.json'
 CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
-MAX_MESSAGES = 50
+MAX_MESSAGES = 20
 
 # load profanity filter
 profanity.load_censor_words() # default list
