@@ -3,6 +3,7 @@
 
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
+import re
 import json
 import requests
 import datetime
@@ -51,6 +52,18 @@ WELCOME_MESSAGE = {
 
 # load scenarios
 SCENARIOS = load_scenarios(file=SCENARIO_FILE)
+
+def format_message(text):
+    """ Convert *word* to <i>word</i> and _word_ to <strong>word</strong> """
+    if not text:
+        return ""
+
+    formatted_text = text
+    formatted_text = re.sub(r'\*(.*?)\*', r'<i>\1</i>', formatted_text)
+    formatted_text = re.sub(r'_(.*?)_', r'<strong>\1</strong>', formatted_text)
+    formatted_text = formatted_text.replace("\n", "<br>")  # preserve line breaks
+
+    return formatted_text
 
 @app.cli.command('register')
 def register_command():
@@ -122,6 +135,9 @@ def send_message():
     # profanity filtering
     if profanity.contains_profanity(message["content"]):
         message["content"] = profanity.censor(message["content"]) # replaces bad words with ****
+
+    # formatting message
+    message["content"] = format_message(message["content"])
 
     messages.append({'content': message['content'],
                      'sender': message['sender'],
