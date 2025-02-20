@@ -39,11 +39,9 @@ profanity.load_censor_words() # default list
 # define welcome message
 WELCOME_MESSAGE = {
     "content": 
-        """<strong>Welcome to Mind Benders: Fun Hypotheticals & 'What If?' Scenarios.</strong>
-        Get creative and discuss about various hypothetical scenarios!
-
-        <span class="green-text">Kick-off:  What if aliens landed tomorrow? What's your survival plan?</span>
-
+        """<strong>Welcome to Mind Benders: Fun Hypotheticals & 'What If?' Scenarios.</strong><br>
+        Get creative and discuss about various hypothetical scenarios!<br><br>
+        <span class="green-text">Kick-off:  What if aliens landed tomorrow? What's your survival plan?</span><br><br>
         Hint: If you need a new hypothetical, type '<strong>new scenario</strong>'.
         """,
     "sender": "WhatIfBot",
