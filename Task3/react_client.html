@@ -138,7 +138,7 @@
 
             return (
                 <div>
-                    <h1>Chat Client</h1>
+                    <h1>Chat Client</h1> {/* Shows Channel list if no channel is selected. Otherwise shows Chat.*/}
                     {!selectedChannel ? (
                         <ChannelList onSelectChannel={setSelectedChannel} />
                     ) : (
@@ -167,13 +167,13 @@
 
             return (
                 <div>
-                    <h2>Channel List</h2>
+                    <h2>Channel List</h2> {/* displays list of channels */}
                     <ul>
                         {channels.map(channel => (
                             <li 
                                 key={channel.id} 
                                 style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }} 
-                                onClick={() => onSelectChannel(channel)}
+                                onClick={() => onSelectChannel(channel)} // click on a channel to open it
                             >
                                 {channel.name} (URL: {channel.endpoint}, Type: {channel.type_of_service})
                             </li>
@@ -182,14 +182,6 @@
                 </div>
             );
         }
-
-        // main code: render the ChannelList component, add more components here
-        // ReactDOM.render(
-        //     <div>
-        //         <h1>Chat client: List of channels</h1>
-        //         <ChannelList />
-        //     </div>,
-        //     document.getElementById('root'));
 
         function Chat({ channel, onBack }) {
             const [messages, setMessages] = React.useState([]);
@@ -212,7 +204,7 @@
                 return () => clearInterval(interval);
             }, [channel.endpoint]);
 
-            function handleUsernameSubmit() {
+            function handleUsernameSubmit() { // set username in local storage
                 if (!tempUsername.trim()) return; // prevent empty usernames
                 localStorage.setItem("username", tempUsername);
                 setUsername(tempUsername);
@@ -220,7 +212,7 @@
 
             function sendMessage() {
                 if (!newMessage.trim()) return;
-                if (!username) return alert("Please enter your name!");
+                if (!username) return alert("Please enter your name!"); // alert if no username
 
                 fetch(channel.endpoint, {
                     method: "POST",
@@ -237,9 +229,9 @@
             }
 
             function formatTimestamp(timestamp) {
-                if (!timestamp) return "Invalid Date";  // Handle missing timestamps
+                if (!timestamp) return "Invalid Date";  // handle missing timestamps
                 const date = new Date(timestamp);  // ISO 8601 format is automatically parsed
-                return date.toLocaleString();  // Converts to local time format
+                return date.toLocaleString();  // converts to local time format
             }
 
             function formatMessage(text) {
@@ -250,24 +242,26 @@
             }
 
             function handleKeyPress(event) {
-                if (event.key === "Enter") {
+                if (event.key === "Enter") { // press Enter for submitting an input
                     event.preventDefault(); // prevents adding a new line
                     sendMessage();
                 }
             }
 
-            const welcomeMessage = messages.find(msg => msg.extra === "welcome");
-            const chatMessages = messages.filter(msg => msg.extra !== "welcome");
+            const welcomeMessage = messages.find(msg => msg.extra === "welcome"); // welcome message is handled differently
+            const chatMessages = messages.filter(msg => msg.extra !== "welcome"); // than chat messages
 
             return (
                 <div>
-                    <button className="btn btn-secondary back-btn" onClick={onBack}>&larr; Back to Channels</button>
+                    <button className="btn btn-secondary back-btn" onClick={onBack}>&larr; Back to Channels</button> {/* button: back to list of Channels */}
                     <div className="chat-container">
-                        <h2 className="chat-title">{channel.name}</h2>
-                        {welcomeMessage && (
+                        <h2 className="chat-title">{channel.name}</h2>  {/* title is Channel name*/}
+                        {welcomeMessage && ( 
                             <div className="welcome-message" dangerouslySetInnerHTML={{ __html: formatMessage(welcomeMessage.content) }} />
-                        )}
+                        )} {/* display welcome message */}
                         
+                        {/* If there is no username, let the user enter one. */}
+                        {/* After setting the username, the chat is shown. */}
                         {!username ? (
                             <div className="username-input-container">
                                 <input
@@ -281,7 +275,7 @@
                             </div>
                         ) : (
                             <div>
-                                <div className="chat-box">
+                                <div className="chat-box"> {/* chat-box for all the send messages, with sender name and timestamp */}
                                     {chatMessages.map((msg, index) => (
                                         <div key={index} className="chat-message">
                                             <span className="message-sender">{msg.sender}</span>
@@ -292,7 +286,7 @@
                                     ))}
                                 </div>
 
-                                <div className="input-container">
+                                <div className="input-container"> {/* input-container for sending messages */}
                                     <input 
                                         type="text" 
                                         className="form-control chat-input" 
@@ -310,7 +304,7 @@
             );
         }
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        ReactDOM.render(<App />, document.getElementById('root')); // renders App
     </script>
 </body>
 </html>
