@@ -156,7 +156,7 @@
 
             React.useEffect(() => {
                 // Fetch list of channels
-                fetch("http://127.0.0.1:5555/channels") // university hub
+                fetch("http://vm146.rz.uni-osnabrueck.de/channels") // university hub
                     .then(response => response.json())
                     .then(data => {
                         console.log("Fetched channels:", data);  // debugging output
@@ -192,7 +192,7 @@
             React.useEffect(() => {
                 const fetchMessages = () => {
                     fetch(channel.endpoint, {
-                        headers: { Authorization: "authkey 0987654321" }
+                        headers: { Authorization: "authkey w34567ztfghj" }
                     })
                         .then(response => response.json())
                         .then(data => setMessages(data))
@@ -218,7 +218,7 @@
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: "authkey 0987654321"
+                        Authorization: "authkey w34567ztfghj"
                     },
                     body: JSON.stringify({
                         content: newMessage,

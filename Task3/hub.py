@@ -38,7 +38,7 @@ db.create_all()  # create database if necessary
 
 CORS(app) # allow all origins
 
-SERVER_AUTHKEY = '1234567890'
+SERVER_AUTHKEY = 'Crr-K24d-2N'
 STANDARD_CLIENT_URL = 'http://localhost:5005' # standard configuration in client.py, chang to real URL if necessary
 
 def health_check(endpoint, authkey):

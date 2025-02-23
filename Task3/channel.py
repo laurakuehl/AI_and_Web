@@ -24,11 +24,11 @@ app.app_context().push()  # create an app context before initializing db
 
 CORS(app)
 
-HUB_URL = 'http://localhost:5555'
-HUB_AUTHKEY = '1234567890'
-CHANNEL_AUTHKEY = '0987654321'
+HUB_URL = 'http://vm146.rz.uni-osnabrueck.de/hub'
+HUB_AUTHKEY = 'Crr-K24d-2N'
+CHANNEL_AUTHKEY = 'w34567ztfghj'
 CHANNEL_NAME = "Mind Benders"
-CHANNEL_ENDPOINT = "http://localhost:5001" # don't forget to adjust in the bottom of the file
+CHANNEL_ENDPOINT = "http://vm146.rz.uni-osnabrueck.de/u044/Task03/channel.wsgi" # don't forget to adjust in the bottom of the file
 CHANNEL_FILE = 'messages.json'
 SCENARIO_FILE = 'scenarios.json'
 CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
