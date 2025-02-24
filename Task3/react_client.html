@@ -156,7 +156,7 @@
 
             React.useEffect(() => {
                 // Fetch list of channels
-                fetch("http://vm146.rz.uni-osnabrueck.de/channels") // university hub
+                fetch("http://vm146.rz.uni-osnabrueck.de/hub/channels") // university hub
                     .then(response => response.json())
                     .then(data => {
                         console.log("Fetched channels:", data);  // debugging output
@@ -303,8 +303,10 @@
                 </div>
             );
         }
+        const basePath = "/Task3";
+        ReactDOM.render(<App basePath={basePath} />, document.getElementById('root'));
 
-        ReactDOM.render(<App />, document.getElementById('root')); // renders App
+        // ReactDOM.render(<App />, document.getElementById('root')); // renders App
     </script>
 </body>
 </html>

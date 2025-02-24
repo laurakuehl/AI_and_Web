@@ -1,3 +1,3 @@
-from channel import app
+from Task3.channel import app
 application = app
 

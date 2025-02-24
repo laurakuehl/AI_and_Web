@@ -7,8 +7,9 @@ import re
 import json
 import requests
 import datetime
+import os
 from better_profanity import profanity
-from scenario import load_scenarios, should_send_scenario, generate_scenario
+from .scenario import load_scenarios, should_send_scenario, generate_scenario
 
 # Class-based application configuration
 class ConfigClass(object):
@@ -24,12 +25,16 @@ app.app_context().push()  # create an app context before initializing db
 
 CORS(app)
 
+# Get the absolute path of the current script
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 HUB_URL = 'http://vm146.rz.uni-osnabrueck.de/hub'
 HUB_AUTHKEY = 'Crr-K24d-2N'
 CHANNEL_AUTHKEY = 'w34567ztfghj'
 CHANNEL_NAME = "Mind Benders"
-CHANNEL_ENDPOINT = "http://vm146.rz.uni-osnabrueck.de/u044/Task03/channel.wsgi" # don't forget to adjust in the bottom of the file
-CHANNEL_FILE = 'messages.json'
+CHANNEL_ENDPOINT = "http://vm146.rz.uni-osnabrueck.de/u044/Task3/channel.wsgi" # don't forget to adjust in the bottom of the file
+# Create a relative path to the file
+CHANNEL_FILE = os.path.join(BASE_DIR, "messages.json")
 SCENARIO_FILE = 'scenarios.json'
 CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
 MAX_MESSAGES = 20
