@@ -122,6 +122,40 @@
             color: #548d57; 
             font-weight: bold;
         }
+
+        /* Chat header, change username button*/
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .chat-user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logged-in-text {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .switch-btn {
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            background-color: #ff9800;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .switch-btn:hover {
+            background-color: #e68900;
+        }
+
     </style>
 </head>
 <body>
@@ -188,6 +222,7 @@
             const [newMessage, setNewMessage] = React.useState("");
             const [username, setUsername] = React.useState(localStorage.getItem("username") || "");
             const [tempUsername, setTempUsername] = React.useState(""); // temporary input for new users
+            const [isUsernameSet, setIsUsernameSet] = React.useState(!!username); // track if the username is set
 
             React.useEffect(() => {
                 const fetchMessages = () => {
@@ -208,6 +243,12 @@
                 if (!tempUsername.trim()) return; // prevent empty usernames
                 localStorage.setItem("username", tempUsername);
                 setUsername(tempUsername);
+                setIsUsernameSet(true); // ensure chat input appears
+            }
+
+            function switchUsername() { 
+                setIsUsernameSet(false); // Show username input again
+                setTempUsername(""); // Reset temp username field
             }
 
             function sendMessage() {
@@ -255,7 +296,13 @@
                 <div>
                     <button className="btn btn-secondary back-btn" onClick={onBack}>&larr; Back to Channels</button> {/* button: back to list of Channels */}
                     <div className="chat-container">
-                        <h2 className="chat-title">{channel.name}</h2>  {/* title is Channel name*/}
+                        <div className="chat-header">
+                            <h2 className="chat-title">{channel.name}</h2>
+                            <div className="chat-user-info">
+                                <span className="logged-in-text">Logged in as: <strong>{username}</strong></span>
+                                <button className="btn btn-warning switch-btn" onClick={switchUsername}>Change Username</button>
+                            </div>
+                        </div> 
                         {welcomeMessage && ( 
                             <div className="welcome-message" dangerouslySetInnerHTML={{ __html: formatMessage(welcomeMessage.content) }} />
                         )} {/* display welcome message */}
