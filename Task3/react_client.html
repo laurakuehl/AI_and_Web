@@ -15,6 +15,34 @@
             padding: 40px;
         }
 
+        /* Channel List */
+        .channel-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .channel-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #ccc;
+            transition: background-color 0.2s;
+        }
+
+        .channel-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .channel-name {
+            font-weight: bold;
+            color: black; /* ✅ Ensures text is readable and not blue */
+            text-decoration: none; /* ✅ Removes underline */
+        }
+
+        .channel-info {
+            color: #666; /* ✅ Lighter gray for extra details */
+            font-size: 0.9rem;
+        }
+
         /* Chat container */
         .chat-container {
             width: 100%;
@@ -215,15 +243,12 @@
 
             return (
                 <div>
-                    <h2>Channel List</h2> {/* displays list of channels */}
-                    <ul>
+                    <h2>Channel List</h2>
+                    <ul className="channel-list">
                         {channels.map(channel => (
-                            <li 
-                                key={channel.id} 
-                                style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }} 
-                                onClick={() => onSelectChannel(channel)} // click on a channel to open it
-                            >
-                                {channel.name} (URL: {channel.endpoint}, Type: {channel.type_of_service})
+                            <li key={channel.id} onClick={() => onSelectChannel(channel)} className="channel-item">
+                                <span className="channel-name">{channel.name}</span>
+                                <span className="channel-info"> (Type: {channel.type_of_service})</span>
                             </li>
                         ))}
                     </ul>
