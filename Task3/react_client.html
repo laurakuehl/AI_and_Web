@@ -286,8 +286,10 @@
             }
 
             function switchUsername() { 
-                setIsUsernameSet(false); // Show username input again
-                setTempUsername(""); // Reset temp username field
+                localStorage.removeItem("username");  // clear from local storage
+                setUsername("");  // clear username state
+                setTempUsername(""); // reset temporary username input
+                setIsUsernameSet(false); // show username input again
             }
 
             function sendMessage() {
@@ -347,7 +349,7 @@
                         
                         {/* If there is no username, let the user enter one. */}
                         {/* After setting the username, the chat is shown. */}
-                        {!username ? (
+                        {!isUsernameSet ? ( 
                             <div className="username-input-container">
                                 <input
                                     type="text"
