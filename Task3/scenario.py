@@ -7,8 +7,8 @@ def load_scenarios(file):
     try:
         with open(file, "r") as f:
             return json.load(f)
-    except (FileNotFoundError, json.decoder.JSONDecodeError):
-        return []
+    except Exception as e:
+        return e
     
 def should_send_scenario(messages, n_messages=10, keywords=["what should we discuss now?", "new hypothetical", "new scenario"]):
     """
