@@ -9,7 +9,7 @@ import requests
 import datetime
 import os
 from better_profanity import profanity
-from .scenario import load_scenarios, should_send_scenario, generate_scenario
+from Task3.scenario import load_scenarios, should_send_scenario, generate_scenario
 
 # Class-based application configuration
 class ConfigClass(object):
@@ -35,7 +35,7 @@ CHANNEL_NAME = "Mind Benders"
 CHANNEL_ENDPOINT = "http://vm146.rz.uni-osnabrueck.de/u044/Task3/channel.wsgi" # don't forget to adjust in the bottom of the file
 # Create a relative path to the file
 CHANNEL_FILE = os.path.join(BASE_DIR, "messages.json")
-SCENARIO_FILE = 'scenarios.json'
+SCENARIO_FILE = "scenarios.json"
 CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
 MAX_MESSAGES = 20
 
@@ -116,6 +116,8 @@ def home_page():
 # POST: Send a message
 @app.route('/', methods=['POST'])
 def send_message():
+    global SCENARIOS
+
     # fetch channels from server
     # check authorization header
     if not check_authorization(request):
