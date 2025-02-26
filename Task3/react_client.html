@@ -88,7 +88,7 @@
             border: 1px solid #ccc;
         }
 
-        .send-save-btn {
+        .send-btn {
             font-size: 1rem;
             padding: 10px 20px;
             margin-left: 10px;
@@ -98,8 +98,22 @@
             color: white;
         }
 
-        .send-save-btn:hover {
+        .send-btn:hover {
             background-color: #218838;
+        }
+
+        .save-btn {
+            font-size: 1rem;
+            padding: 10px 20px;
+            margin-left: 10px;
+            border-radius: 10px;
+            background-color: #ff9800;
+            border: none;
+            color: white;
+        }
+
+        .save-btn:hover {
+            background-color: #e68900;
         }
 
         /* Username input styling */
@@ -298,14 +312,13 @@
                     <div className="chat-container">
                         <div className="chat-header">
                             <h2 className="chat-title">{channel.name}</h2>
-                            <div className="chat-user-info">
-                                <span className="logged-in-text">Logged in as: <strong>{username}</strong></span>
-                                <button className="btn btn-warning switch-btn" onClick={switchUsername}>Change Username</button>
-                            </div>
-                        </div> 
-                        {welcomeMessage && ( 
-                            <div className="welcome-message" dangerouslySetInnerHTML={{ __html: formatMessage(welcomeMessage.content) }} />
-                        )} {/* display welcome message */}
+                            {isUsernameSet && (
+                                <div className="chat-user-info">
+                                    <span className="logged-in-text">Logged in as: <strong>{username}</strong></span>
+                                    <button className="btn btn-warning switch-btn" onClick={switchUsername}>Switch Username</button>
+                                </div>
+                            )}
+                        </div>
                         
                         {/* If there is no username, let the user enter one. */}
                         {/* After setting the username, the chat is shown. */}
@@ -318,10 +331,13 @@
                                     onChange={(e) => setTempUsername(e.target.value)}
                                     placeholder="Enter your username..."
                                 />
-                                <button className="btn send-save-btn" onClick={handleUsernameSubmit}>Save</button>
+                                <button className="btn save-btn" onClick={handleUsernameSubmit}>Save</button>
                             </div>
                         ) : (
                             <div>
+                                {welcomeMessage && ( 
+                                    <div className="welcome-message" dangerouslySetInnerHTML={{ __html: formatMessage(welcomeMessage.content) }} />
+                                )} {/* display welcome message */}
                                 <div className="chat-box"> {/* chat-box for all the send messages, with sender name and timestamp */}
                                     {chatMessages.map((msg, index) => (
                                         <div key={index} className="chat-message">
@@ -342,7 +358,7 @@
                                         onKeyDown={handleKeyPress} 
                                         placeholder="Type a message..." 
                                     />
-                                    <button className="btn btn-primary send-save-btn" onClick={sendMessage}>Send</button>
+                                    <button className="btn btn-primary send-btn" onClick={sendMessage}>Send</button>
                                 </div>
                             </div>
                         )}
