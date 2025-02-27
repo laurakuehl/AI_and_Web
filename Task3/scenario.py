@@ -8,6 +8,7 @@ def load_scenarios(file):
         with open(file, "r") as f:
             return json.load(f)
     except Exception as e:
+        print(f"PATH: {file}")
         return e
     
 def should_send_scenario(messages, n_messages=10, keywords=["what should we discuss now?", "new hypothetical", "new scenario"]):

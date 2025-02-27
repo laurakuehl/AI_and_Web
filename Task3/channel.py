@@ -141,7 +141,7 @@ def send_message():
 
     # profanity filtering
     if profanity.contains_profanity(message["content"]):
-        message["content"] = profanity.censor(message["content"]) # replaces bad words with ****
+        message["content"] = profanity.censor(message["content"], censor_char='$') # replaces bad words with $$$$
 
     # formatting message
     message["content"] = format_message(message["content"])
