@@ -9,7 +9,7 @@ import requests
 import datetime
 import os
 from better_profanity import profanity
-from Task3.scenario import load_scenarios, should_send_scenario, generate_scenario
+from scenario import load_scenarios, should_send_scenario, generate_scenario
 
 # Class-based application configuration
 class ConfigClass(object):
@@ -32,9 +32,9 @@ HUB_URL = 'http://vm146.rz.uni-osnabrueck.de/hub'
 HUB_AUTHKEY = 'Crr-K24d-2N'
 CHANNEL_AUTHKEY = 'w34567ztfghj'
 CHANNEL_NAME = "Mind Benders"
-CHANNEL_ENDPOINT = "http://vm146.rz.uni-osnabrueck.de/u044/Task3/channel.wsgi" # don't forget to adjust in the bottom of the file
+CHANNEL_ENDPOINT = "http://vm146.rz.uni-osnabrueck.de/u099/channel.wsgi" # don't forget to adjust in the bottom of the file
 # Create a relative path to the file
-CHANNEL_FILE = os.path.join(BASE_DIR, "messages.json")
+CHANNEL_FILE = "messages.json"
 SCENARIO_FILE = "scenarios.json"
 CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
 MAX_MESSAGES = 20
@@ -141,7 +141,7 @@ def send_message():
 
     # profanity filtering
     if profanity.contains_profanity(message["content"]):
-        message["content"] = profanity.censor(message["content"]) # replaces bad words with ****
+        message["content"] = profanity.censor(message["content"], censor_char="$") # replaces bad words with $$$$
 
     # formatting message
     message["content"] = format_message(message["content"])
