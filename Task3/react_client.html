@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* General body styling settings*/
+        /* General body styling */
         body {
             background-color: #f0f8ff;
             font-family: 'Poppins', sans-serif;
@@ -34,12 +34,12 @@
 
         .channel-name {
             font-weight: bold;
-            color: black; 
-            text-decoration: none; 
+            color: black; /* ✅ Ensures text is readable and not blue */
+            text-decoration: none; /* ✅ Removes underline */
         }
 
         .channel-info {
-            color: #666; 
+            color: #666; /* ✅ Lighter gray for extra details */
             font-size: 0.9rem;
         }
 
@@ -209,11 +209,6 @@
 
     <script type="text/babel">
 
-        /**
-         * This is the main app.
-         * It manages the state of the selected channel and decides whether to show 
-         * the channel list or the chat interface.
-         */
         function App() {
             const [selectedChannel, setSelectedChannel] = React.useState(null);
 
@@ -261,11 +256,6 @@
             );
         }
 
-        /**
-         * This  handles the chat interface.
-         * It fetches messages for the selected channel, allows the user to send messages,
-         * and provides a back button to return to the channel list.
-         */
         function Chat({ channel, onBack }) {
             const [messages, setMessages] = React.useState([]);
             const [newMessage, setNewMessage] = React.useState("");
