@@ -7,12 +7,40 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* General body styling */
+        /* General body styling settings*/
         body {
             background-color: #f0f8ff;
             font-family: 'Poppins', sans-serif;
             height: 100vh;
             padding: 40px;
+        }
+
+        /* Channel List */
+        .channel-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .channel-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #ccc;
+            transition: background-color 0.2s;
+        }
+
+        .channel-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .channel-name {
+            font-weight: bold;
+            color: black; 
+            text-decoration: none; 
+        }
+
+        .channel-info {
+            color: #666; 
+            font-size: 0.9rem;
         }
 
         /* Chat container */
@@ -88,7 +116,7 @@
             border: 1px solid #ccc;
         }
 
-        .send-save-btn {
+        .send-btn {
             font-size: 1rem;
             padding: 10px 20px;
             margin-left: 10px;
@@ -98,8 +126,22 @@
             color: white;
         }
 
-        .send-save-btn:hover {
+        .send-btn:hover {
             background-color: #218838;
+        }
+
+        .save-btn {
+            font-size: 1rem;
+            padding: 10px 20px;
+            margin-left: 10px;
+            border-radius: 10px;
+            background-color: #ff9800;
+            border: none;
+            color: white;
+        }
+
+        .save-btn:hover {
+            background-color: #e68900;
         }
 
         /* Username input styling */
@@ -122,6 +164,40 @@
             color: #548d57; 
             font-weight: bold;
         }
+
+        /* Chat header, change username button*/
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .chat-user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logged-in-text {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .switch-btn {
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            background-color: #ff9800;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .switch-btn:hover {
+            background-color: #e68900;
+        }
+
     </style>
 </head>
 <body>
@@ -133,6 +209,11 @@
 
     <script type="text/babel">
 
+        /**
+         * This is the main app.
+         * It manages the state of the selected channel and decides whether to show 
+         * the channel list or the chat interface.
+         */
         function App() {
             const [selectedChannel, setSelectedChannel] = React.useState(null);
 
@@ -156,26 +237,23 @@
 
             React.useEffect(() => {
                 // Fetch list of channels
-                fetch("http://127.0.0.1:5555/channels") // university hub
+                fetch("http://vm146.rz.uni-osnabrueck.de/hub/channels") // university hub
                     .then(response => response.json())
                     .then(data => {
                         console.log("Fetched channels:", data);  // debugging output
                         setChannels(data.channels);
                     })
-                    .catch(error => console.error("Error fetching channels:", error));
+                    .catch(error => console.error("Error fetching channels!!??:", error));
             }, []);  // empty list here means that this effect will run only once (you can add a variable to run it on change)
 
             return (
                 <div>
-                    <h2>Channel List</h2> {/* displays list of channels */}
-                    <ul>
+                    <h2>Channel List</h2>
+                    <ul className="channel-list">
                         {channels.map(channel => (
-                            <li 
-                                key={channel.id} 
-                                style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }} 
-                                onClick={() => onSelectChannel(channel)} // click on a channel to open it
-                            >
-                                {channel.name} (URL: {channel.endpoint}, Type: {channel.type_of_service})
+                            <li key={channel.id} onClick={() => onSelectChannel(channel)} className="channel-item">
+                                <span className="channel-name">{channel.name}</span>
+                                <span className="channel-info"> (Type: {channel.type_of_service})</span>
                             </li>
                         ))}
                     </ul>
@@ -183,16 +261,22 @@
             );
         }
 
+        /**
+         * This  handles the chat interface.
+         * It fetches messages for the selected channel, allows the user to send messages,
+         * and provides a back button to return to the channel list.
+         */
         function Chat({ channel, onBack }) {
             const [messages, setMessages] = React.useState([]);
             const [newMessage, setNewMessage] = React.useState("");
             const [username, setUsername] = React.useState(localStorage.getItem("username") || "");
             const [tempUsername, setTempUsername] = React.useState(""); // temporary input for new users
+            const [isUsernameSet, setIsUsernameSet] = React.useState(!!username); // track if the username is set
 
             React.useEffect(() => {
                 const fetchMessages = () => {
                     fetch(channel.endpoint, {
-                        headers: { Authorization: "authkey 0987654321" }
+                        headers: { Authorization: "authkey " + channel.authkey }
                     })
                         .then(response => response.json())
                         .then(data => setMessages(data))
@@ -208,6 +292,14 @@
                 if (!tempUsername.trim()) return; // prevent empty usernames
                 localStorage.setItem("username", tempUsername);
                 setUsername(tempUsername);
+                setIsUsernameSet(true); // ensure chat input appears
+            }
+
+            function switchUsername() { 
+                localStorage.removeItem("username");  // clear from local storage
+                setUsername("");  // clear username state
+                setTempUsername(""); // reset temporary username input
+                setIsUsernameSet(false); // show username input again
             }
 
             function sendMessage() {
@@ -218,7 +310,7 @@
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: "authkey 0987654321"
+                        Authorization: "authkey " + channel.authkey
                     },
                     body: JSON.stringify({
                         content: newMessage,
@@ -234,7 +326,9 @@
                 return date.toLocaleString();  // converts to local time format
             }
 
-            function formatMessage(text) {
+            function formatMessage(text, censorSymbol = "$") {
+                const censorRegex = new RegExp(`\\${censorSymbol}(.*?)\\${censorSymbol}`, "g");
+                text = text.replace(censorRegex, "███");
                 return text
                     .replace(/\*(.*?)\*/g, "<i>$1</i>")  // convert *word* to <i>word</i>
                     .replace(/_(.*?)_/g, "<strong>$1</strong>")   // convert _word_ to <strong>word</strong>
@@ -255,14 +349,19 @@
                 <div>
                     <button className="btn btn-secondary back-btn" onClick={onBack}>&larr; Back to Channels</button> {/* button: back to list of Channels */}
                     <div className="chat-container">
-                        <h2 className="chat-title">{channel.name}</h2>  {/* title is Channel name*/}
-                        {welcomeMessage && ( 
-                            <div className="welcome-message" dangerouslySetInnerHTML={{ __html: formatMessage(welcomeMessage.content) }} />
-                        )} {/* display welcome message */}
+                        <div className="chat-header">
+                            <h2 className="chat-title">{channel.name}</h2>
+                            {isUsernameSet && (
+                                <div className="chat-user-info">
+                                    <span className="logged-in-text">Logged in as: <strong>{username}</strong></span>
+                                    <button className="btn btn-warning switch-btn" onClick={switchUsername}>Change Username</button>
+                                </div>
+                            )}
+                        </div>
                         
                         {/* If there is no username, let the user enter one. */}
                         {/* After setting the username, the chat is shown. */}
-                        {!username ? (
+                        {!isUsernameSet ? ( 
                             <div className="username-input-container">
                                 <input
                                     type="text"
@@ -271,10 +370,14 @@
                                     onChange={(e) => setTempUsername(e.target.value)}
                                     placeholder="Enter your username..."
                                 />
-                                <button className="btn send-save-btn" onClick={handleUsernameSubmit}>Save</button>
+                                <button className="btn save-btn" onClick={handleUsernameSubmit}>Save</button>
                             </div>
                         ) : (
                             <div>
+                                {welcomeMessage && ( 
+                                    <div className="welcome-message" dangerouslySetInnerHTML={{'__html': formatMessage(welcomeMessage.content)}} />
+
+                                )} {/* display welcome message */}
                                 <div className="chat-box"> {/* chat-box for all the send messages, with sender name and timestamp */}
                                     {chatMessages.map((msg, index) => (
                                         <div key={index} className="chat-message">
@@ -282,6 +385,7 @@
                                             <span className="timestamp"> ({formatTimestamp(msg.timestamp)})</span>: 
                                             <span>&nbsp;</span>
                                             <span dangerouslySetInnerHTML={{ __html: formatMessage(msg.content) }} className="message-content" />
+
                                         </div>
                                     ))}
                                 </div>
@@ -295,7 +399,7 @@
                                         onKeyDown={handleKeyPress} 
                                         placeholder="Type a message..." 
                                     />
-                                    <button className="btn btn-primary send-save-btn" onClick={sendMessage}>Send</button>
+                                    <button className="btn btn-primary send-btn" onClick={sendMessage}>Send</button>
                                 </div>
                             </div>
                         )}
@@ -303,6 +407,8 @@
                 </div>
             );
         }
+        // const basePath = "/Task3";
+        // ReactDOM.render(<App basePath={basePath} />, document.getElementById('root'));
 
         ReactDOM.render(<App />, document.getElementById('root')); // renders App
     </script>
